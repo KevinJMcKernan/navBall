@@ -1,25 +1,23 @@
-// File from adam coffman solar-system-opengl
-// RGBpixmap.cpp - routines to read a BMP file
+// F.S.Hill Jr. "Computer Graphics Using Open-GL"
 #include "RGBpixmap.h"
 
 typedef unsigned short ushort;
 typedef unsigned long ulong;
-fstream inf; // global in this file for convenience
+fstream inf; 
 
-//<<<<<<<<<<<<<<<<<<<<< getShort >>>>>>>>>>>>>>>>>>>>
-ushort getShort() //helper function
-{ //BMP format uses little-endian integer types
-  // get a 2-byte integer stored in little-endian form
+// BMP uses little-endian short.
+ushort getShort() {
 		char ic;
 		ushort ip;
-		inf.get(ic); ip = ic;  //first byte is little one 
-		inf.get(ic);  ip |= ((ushort)ic << 8); // or in high order byte
+		inf.get(ic);
+		ip = ic; 
+		inf.get(ic);
+		ip |= ((ushort)ic << 8); 
 		return ip;
 }
-//<<<<<<<<<<<<<<<<<<<< getLong >>>>>>>>>>>>>>>>>>>
-ulong getLong() //helper function
-{  //BMP format uses little-endian integer types
-   // get a 4-byte integer stored in little-endian form
+
+// BMP uses little-endian longs.
+ulong getLong() {
 		ulong ip = 0;
 		char ic = 0;
 		unsigned char uc = ic;
@@ -29,17 +27,15 @@ ulong getLong() //helper function
 		inf.get(ic); uc = ic; ip |=((ulong)uc << 24);
 		return ip;
 	}
-//<<<<<<<<<<<<<<<<<< RGBPixmap:: readBmpFile>>>>>>>>>>>>>
+
 int RGBpixmap:: readBMPFile(string fname, bool hasAlpha) 
 {  
-	// Read into memory an mRGB image from
-	// an uncompressed BMP file.
-	// Return 0 on failure, 1 on success
-	inf.open(fname.c_str(), ios::in|ios::binary); //read binary char's
+	// Read into memory an mRGB image from an uncompressed BMP file.
+	inf.open(fname.c_str(), ios::in|ios::binary); // must read binary!
 	if(!inf) { cout << " can't open file: " << fname << endl; return 0; }
 	int k, row, col, numPadBytes, nBytesInRow;
 
-	// read the file header information
+	// read header information
 	char ch1, ch2;
 	inf.get(ch1);
 	inf.get(ch2);						//type: always 'BM'
@@ -67,28 +63,25 @@ int RGBpixmap:: readBMPFile(string fname, bool hasAlpha)
 		return 0;
 	} 
 
-	// Add bytes at end of each row so 
-	// total # is a multiple of 4;
-	// round up 3*numCols to next mult. of 4
 	nBytesInRow = ((3 * numCols + 3)/4) * 4;
-	numPadBytes = nBytesInRow - 3 * numCols; // need this many
-	nRows = numRows; // set class's data members
+	numPadBytes = nBytesInRow - 3 * numCols; 
+	nRows = numRows; 
 	nCols = numCols;
-	pixel = new mRGB[nRows * nCols]; //make space for array
+	pixel = new mRGB[nRows * nCols]; 
 	if (!pixel)
-		return 0; // out of memory!
+		return 0; 
 
 	long count = 0;
 	char dum;
-	for(row = 0; row < nRows; row++) // read pixel values
+	for(row = 0; row < nRows; row++) 
 	{
 		for(col = 0; col < nCols; col++)
 		{
 			char r,g,b;
 			inf.get(b);
 			inf.get(g);
-			inf.get(r); //read bytes
-			pixel[count].r = r; //place them in colors
+			inf.get(r); 
+			pixel[count].r = r; 
 			pixel[count].g = g;
 			pixel[count].b = b;
 			if ( (hasAlpha) && (r==-1) && (g==-1) && (b==-1) )
@@ -96,11 +89,11 @@ int RGBpixmap:: readBMPFile(string fname, bool hasAlpha)
 			else
 				pixel[count++].a = 255;
 		}
-   		for(k = 0; k < numPadBytes ; k++) //skip pad bytes at row's end
+   		for(k = 0; k < numPadBytes ; k++) 
 			inf >> dum;
 	}
 	inf.close();
-	return 1; // success
+	return 1; 
 }
 
 void RGBpixmap :: setTexture(GLuint textureName)

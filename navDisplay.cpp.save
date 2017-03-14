@@ -1,0 +1,204 @@
+#include <assert.h>
+#include <math.h>
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include <vector>
+#include <GL/freeglut.h>  // Include the GLUT header file
+#include "RGBpixmap.h"
+
+GLuint navBallTexture;
+const char navBallFileName[] = "GroundAndSky/t1.bmp";
+const GLfloat LIGHT_0_POSITION[] = {1.0, 0.0, 0.0, 0.0};
+const GLfloat LIGHT_AMBIENT[] = {0.8, 0.8, 0.8, 1.0};
+const GLfloat LIGHT_DEFUSE[] = {0.9, 0.9, 0.9, 1.0};
+const GLfloat LIGHT_SPECULAR[] = {1.0, 1.0, 1.0, 1.0};
+const GLfloat ASPECT_RATIO = 1.5;
+const GLfloat LIGHT_MODEL_AMBIENT[] = {0.2, 0.2, 0.2, 1.0};
+
+// Lights setup
+void setupLight() {
+	glLightfv(GL_LIGHT0, GL_AMBIENT, LIGHT_AMBIENT);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, LIGHT_DEFUSE);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, LIGHT_SPECULAR);
+	glLightfv(GL_LIGHT0, GL_POSITION, LIGHT_0_POSITION);
+}
+
+// enable lighting
+void updateLight() {
+	glPushMatrix();
+	glLightfv(GL_LIGHT0, GL_POSITION, LIGHT_0_POSITION);
+	glPopMatrix();
+
+	glEnable(GL_LIGHT0);
+}
+
+// Draw the navball
+void drawNavBall(GLuint navBallTexture, GLfloat navBallRadius){
+        GLUquadricObj* quadro = gluNewQuadric();
+        gluQuadricNormals(quadro, GLU_SMOOTH);
+	gluQuadricTexture(quadro, GL_TRUE);
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D, navBallTexture);
+        gluSphere(quadro, navBallRadius, 48, 48);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+        gluDeleteQuadric(quadro);
+}
+
+// MakeImage usage: makeImage(fileName, textureName, hasAlpha);
+// function from adam coffman solar-system-opengl
+void makeImage(const char bitmapFilename[], GLuint &textureName, bool hasAlpha) {
+                RGBpixmap pix;
+                pix.readBMPFile(bitmapFilename, hasAlpha);
+                pix.setTexture(textureName);
+                return;
+}
+
+// Make all our images: ex. NavBall texture, sliding rule textures.
+void makeAllImages() {
+        makeImage(navBallFileName, navBallTexture, false);
+        // Add other images you want to make below.
+
+        return;
+}
+
+
+
+
+// Sources: TODO add sources.
+
+// Compile and link with gcc t1.c -o t1 -lGL -lGLU -lglut
+
+// Display FCN
+void display(void) {
+	// Initialize lighting model
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LIGHT_MODEL_AMBIENT);
+	// Enable the lighting model.
+	glEnable(GL_LIGHTING);
+	// Setup viewing camera
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60, 1, 0.2, 10.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();	
+	
+	// TODO move stuff to a initGL FCN. 
+	//	For example a cleanStart FCN.
+	
+	// Logic for rotating sphere in here.
+	
+	// This specifies "cleared" values for the buffers.
+	// Note this only allows values of 0 to 1.
+//	glClearColor(0.0f, 0.0f, 1.0f, 1.0f); // Red, Green, Blue, alpha.
+	
+	// Actually clear the buffer.	
+//	glClear(GL_COLOR_BUFFER_BIT); 
+	
+	// www.opengl-tutorial.org/beginners-tutorial/tutorial-3-matrix
+	// 	Everything is matrix-cis man.
+	// 	Basically creates a blank template to work on.
+	// 	Loads the identity matrix.
+//	glLoadIdentity(); 
+	
+	
+	
+ 
+	// Push stuff back so we can see it 200 units.
+	glTranslatef(0.0f, 0.0f, -2.0f); 
+
+	// Setup lighting!
+	updateLight();
+ 
+	// We love spheres. So round. So classy.
+	
+	drawNavBall(navBallTexture, .18);
+	glDisable(GL_LIGHTING);
+	glutSwapBuffers();
+ 
+	// SHOW ME WHAT YOU GOT.
+	// Reference: 
+	glFlush(); // Flush the OpenGL buffers to the window
+	
+	// Logic for rotating sphere goes here.
+	
+}
+
+// Some magic happens here.
+void reshape(int width, int height) {
+	
+	// Defines a area that we will draw too.
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height); // Set our viewport to the size of our window
+	
+	
+	glMatrixMode(GL_PROJECTION); // Switch to the projection matrix so that we can manipulate how our scene is viewed
+	glLoadIdentity(); // Reset the projection matrix to the identity matrix so that we don't get any artifacts (cleaning up)
+ 
+	gluPerspective(60, (GLfloat)width / (GLfloat)height, 1.0, 100.0); // Set the Field of view angle (in degrees), the aspect ratio of our window, and the new and far planes
+ 
+	glMatrixMode(GL_MODELVIEW); // Switch back to the model view matrix, so that we can start drawing shapes correctly
+	
+}
+
+
+
+// Main program
+int main(int argc, char **argv) {
+	
+	printf("Hello, world!\n");
+	
+	// Define our window size:
+	glutInitWindowSize(500, 500);
+	
+		
+	// Set the initial display position in pixels.
+	glutInitWindowPosition(100, 100);	// X and Y Location
+	
+	// Initiatize the GLUT library, and negotiate a session,
+	//	with the window system.
+	glutInit(&argc, argv);
+	
+	// Initial Display Mode: determines the display mode,
+	//	for the to-be-created window.
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_STENCIL | GLUT_DEPTH);	// singe buffered window. We can add more later.
+
+	
+	// TODO: For glutCreateWindow. remove Title Bar or go full Screen.
+	// Check: glutFULLScreen.
+	// Creates a top-level window. Name: Navball
+	glutCreateWindow("NavBall");
+	
+	// Our Display Function
+	glutDisplayFunc(display);	// FCN: display up above.;
+	
+	glViewport(0,0, 500, 500);	
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glEnable(GL_NORMALIZE);
+	glCullFace(GL_BACK);
+	glCullFace(GL_CULL_FACE);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	setupLight();
+	makeAllImages();
+	// Our idle function
+	glutIdleFunc(display);		// FCN: display up above.
+	
+	// Our window makes a call back to the program. 
+	// 	Nothing happens unless we describe how we create our shape.
+	glutReshapeFunc(reshape); 
+	
+	// Glut main loop for event processing, like changing rotation etc.
+	glutMainLoop();
+	
+	
+	
+	return 0;
+}

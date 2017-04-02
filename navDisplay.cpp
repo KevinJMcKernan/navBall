@@ -14,12 +14,27 @@
 #include <vector>
 #include <GL/freeglut.h>  // Include the GLUT header file
 #include "RGBpixmap.h"
+#include <binn.h>
+#include <unistd.h>
+#include "SOIL.h"
 
 // Graphics Library Unsigned Binary Integer
-GLuint navBallTexture;
+GLuint navBallTexture = 1;
+GLuint airSpeedTexture = 2;
+GLuint altitudeTexture = 3;
+GLuint compassTexture = 4;
 
 // BMP image file. You can make one in MS paint. 
 const char navBallFileName[] = "Bitmaps/t2.bmp";
+const char airSFileName[] = "Bitmaps/t5s.png";
+const char altitudeFileName[] = "Bitmaps/t5.png";
+const char compassFileName[] =  "Bitmaps/t5c.png";
+
+// Errors
+GLenum err;
+
+GLfloat moveAirStripUpTest = 0;
+GLfloat moveAltitudeUpTest = 0;
 
 // Constants for our lighting and image. Edit these to change 
 // Lighting.
@@ -28,7 +43,6 @@ const char navBallFileName[] = "Bitmaps/t2.bmp";
 
 // This specifies light position. 
 // First value raises light.
-// 
 const GLfloat LIGHT_0_POSITION[] = {1.0, 0.0, 1.0, 0.0}; 	// Light Position.
 // Ambient light is the light already present in the scene.
 const GLfloat LIGHT_AMBIENT[] = {1.0, 1.0, 1.0, 1.0};		// RGBA ambient lighting. was .8 x 3
@@ -81,6 +95,7 @@ void drawNavBall(GLuint navBallTexture, GLfloat navBallRadius){
         glPushMatrix();
 	// This controls rotation.
 	glRotatef(theta[0], 0.0, 1.0, 0.0);
+	glRotatef(theta[0], 1.0, 0.0, 0.0);
 	// Setup texture binding between the references.
         glBindTexture(GL_TEXTURE_2D, navBallTexture);
 	// Create the sphere with the texture and longitude & lat. divisions,
@@ -91,6 +106,78 @@ void drawNavBall(GLuint navBallTexture, GLfloat navBallRadius){
 	// Cleanup
         glDisable(GL_TEXTURE_2D);
         gluDeleteQuadric(ball);
+}
+
+// Draw the Altitude Strip
+void drawAltitudeStrip(GLuint altitudeTexture){
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+	// 3rd arg previously MODULATE
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glPushMatrix();
+        // Enable 2D textures.
+        glBindTexture(GL_TEXTURE_2D, altitudeTexture);
+	// Second arguement is up
+	// first arguement is left/right
+	// 2, -5, 4
+	glTranslatef(.95, -3.0 + (-moveAltitudeUpTest), 2.0);
+
+        glBegin(GL_POLYGON);
+                glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
+                glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+                glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0, 0.0, 0.0);
+                glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 16.0, 0.0);
+        glEnd();
+        glPopMatrix();
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+}
+
+// Draw the Altitude Strip
+void drawAirSpeedStrip(GLuint airSpeedTexture){
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        // 3rd arg previously MODULATE
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glPushMatrix();
+        // Enable 2D textures.
+        glBindTexture(GL_TEXTURE_2D, airSpeedTexture);
+        // Second arguement is up
+        // first arguement is left/right
+        // 2, -5, 4
+        glTranslatef(-1.95, -3.0 + (-moveAirStripUpTest), 2.0);
+        glBegin(GL_POLYGON);
+                glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
+                glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+                glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0, 0.0, 0.0);
+                glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 16.0, 0.0);
+        glEnd();
+        glPopMatrix();
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+}
+
+void drawCompass(GLuint compassTexture) {
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        // 3rd arg previously MODULATE
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glPushMatrix();
+        // Enable 2D textures.
+        glBindTexture(GL_TEXTURE_2D, compassTexture);
+        // Second arguement is up
+        // first arguement is left/right
+        // 2, -5, 4
+        glTranslatef(-8.0, -2.0, 1.9);
+        glBegin(GL_POLYGON);
+                glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 1.0, 0.0);
+                glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+                glTexCoord2f(1.0f, 0.0f); glVertex3f(16.0, 0.0, 0.0);
+                glTexCoord2f(1.0f, 1.0f); glVertex3f(16.0, 1.0, 0.0);
+        glEnd();
+        glPopMatrix();
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
 }
 
 // MakeImage usage: makeImage(fileName, textureName, hasAlpha);
@@ -106,8 +193,35 @@ void makeImage(const char bitmapFilename[], GLuint &textureName, bool hasAlpha) 
 // Call previously defined function, allows for expansion with more objects.
 // Make all our images: ex. NavBall texture, sliding rule textures.
 void makeAllImages() {
-        makeImage(navBallFileName, navBallTexture, false);
+       makeImage(navBallFileName, navBallTexture, false);
         // Add other images you want to make below.
+	altitudeTexture = SOIL_load_OGL_texture(
+		altitudeFileName,
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	); 
+
+	airSpeedTexture = SOIL_load_OGL_texture(
+	        airSFileName,
+                SOIL_LOAD_AUTO,
+                SOIL_CREATE_NEW_ID,
+                SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+        );
+
+	compassTexture = SOIL_load_OGL_texture(
+                compassFileName,
+                SOIL_LOAD_AUTO,
+                SOIL_CREATE_NEW_ID,
+                SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+        ); 
+
+
+
+	if(0 == altitudeTexture) {
+		printf("Error loading!");
+	}
+
 
         return;
 }
@@ -117,6 +231,7 @@ void makeAllImages() {
 
 // Display FCN
 void display(void) {
+
 	// Initialize lighting model
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LIGHT_MODEL_AMBIENT);
 	// Enable the lighting model.
@@ -142,18 +257,32 @@ void display(void) {
 	if(theta[0] > 360.0) {
 		theta[0] = 0.0;
 	}
+	moveAltitudeUpTest += .001;
+	if(moveAltitudeUpTest > 4 ){
+		moveAltitudeUpTest = 0;
+	}
+	moveAirStripUpTest += .002;
+	if(moveAirStripUpTest > 4){
+		moveAirStripUpTest = 0;
+	}
 	
 	// Push stuff back so we can see it 2 units.
+	// 3rd value was 10
 	glTranslatef(0.0f, 0.0f, -5.0f); 
 
 	// Setup lighting!
 	updateLighting();
- 
+
 	// We love spheres. So round. So classy.
 	drawNavBall(navBallTexture, 2);
+	drawAirSpeedStrip(airSpeedTexture);
+	drawAltitudeStrip(altitudeTexture);
+	drawCompass(compassTexture);
+
+	//drawAltStrip(altitudeTexture);
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
- 
+
 	// SHOW ME WHAT YOU GOT.
 	// Reference: 
 	glFlush(); // Flush the OpenGL buffers to the window

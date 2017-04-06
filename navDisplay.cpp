@@ -1,4 +1,4 @@
-// Main Sources:
+ // Main Sources:
 // www.khronos.org/registry/OpenGL-Refpages
 // F.S.Hill Jr. "Computer Graphics Using OpenGL"
 // www.glprogramming.com/red/about.html
@@ -10,13 +10,14 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
+#include <string.h>
 #include <vector>
 #include <GL/freeglut.h>  // Include the GLUT header file
 #include "RGBpixmap.h"
 #include <binn.h>
 #include <unistd.h>
 #include "SOIL.h"
+#include <sstream>
 
 // Graphics Library Unsigned Binary Integer
 GLuint navBallTexture = 1;
@@ -25,7 +26,7 @@ GLuint altitudeTexture = 3;
 GLuint compassTexture = 4;
 
 // BMP image file. You can make one in MS paint. 
-const char navBallFileName[] = "imageTextures/ball.png";
+const char navBallFileName[] = "imageTextures/newBall.png";
 const char airSFileName[] = "imageTextures/t6s.png";
 const char altitudeFileName[] = "imageTextures/t6a.png";
 const char compassFileName[] =  "imageTextures/t6c.png";
@@ -94,8 +95,11 @@ void drawNavBall(GLuint navBallTexture, GLfloat navBallRadius){
 	// Push
         glPushMatrix();
 	// This controls translation: 1st arg +right, 2nd arg +up, 3rd arg +closer
-	glTranslatef(0.0, 0.5, -0.2);
+	glTranslatef(0.0, 0.5, -2.0);
 	// This controls rotation.
+	glRotatef(90.0, 1.0, 0.0, 0.0);
+	glRotatef(180.0, 0.0, 1.0, 0.0);
+	glRotatef(90.0, 0.0, 0.0, 1.0);
 	glRotatef(theta[0], 0.0, 1.0, 0.0);
 	glRotatef(theta[0], 1.0, 0.0, 0.0);
 	// Setup texture binding between the references.
@@ -171,7 +175,7 @@ void drawCompass(GLuint compassTexture) {
         // Second arguement is up
         // first arguement is left/right
         // 2, -5, 4
-        glTranslatef(-8.0, -2.0, 1.9);
+        glTranslatef(-8.0, -2.15, 1.9);
         glBegin(GL_POLYGON);
                 glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 1.0, 0.0);
                 glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
@@ -186,26 +190,32 @@ void drawCompass(GLuint compassTexture) {
 // Draw airplane  Left Wing
 void drawAirplaneLeftWing(void){
 	glPushMatrix();
-        glTranslatef(-0.4, 0.5, 2.0);
+        glTranslatef(-0.55, 0.30, 2.0); // 1: left/right, 2: upDown
+	glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
-                glVertex3f(0.0, 0.1, 0.0); // #1               
+		glColor3f(1.0, 0.05, 0.05);
+                glVertex3f(0.0, 0.05, 0.0); // #1               
 		glVertex3f(0.0, 0.0, 0.0); // #2
 		glVertex3f(0.4, 0.0, 0.0); // #3
-		glVertex3f(0.4, 0.1, 0.0);
+		glVertex3f(0.4, 0.05, 0.0);
         glEnd();
+	glEnable(GL_LIGHTING);
 	glPopMatrix();
 }
 
 // Draw airplane right wing
 void drawAirplaneRightWing(void){
         glPushMatrix();
-        glTranslatef(0.4, 0.5, 2.0);
+        glTranslatef(.155, 0.30, 2.0);
+	glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
-                glVertex3f(0.0, 0.1, 0.0); // #1
+		glColor3f(1.0, 0.05, 0.05);
+                glVertex3f(0.0, 0.05, 0.0); // #1
                 glVertex3f(0.0, 0.0, 0.0); // #2
                 glVertex3f(0.4, 0.0, 0.0); // #3
-                glVertex3f(0.4, 0.1, 0.0);
+                glVertex3f(0.4, 0.05, 0.0);
         glEnd();
+	glEnable(GL_LIGHTING);
         glPopMatrix();
 }
 
@@ -220,7 +230,7 @@ void drawAirplaneTinyBall(void){
         // Push
         glPushMatrix();
         // This controls translation: 1st arg +right, 2nd arg +up, 3rd arg +closer
-        glTranslatef(0.0, 1.0, 2.0);
+        glTranslatef(0.0, .5, 2.0);
         // Setup texture binding between the references.
         // Create the sphere with the texture and longitude & lat. divisions,
         gluSphere(planeBall, .05, 10, 10);
@@ -232,6 +242,416 @@ void drawAirplaneTinyBall(void){
 
 }
 
+void drawAltitudeText(int altitude){
+	std:stringstream ss;
+	ss << altitude;
+	std::string str = ss.str();
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0, 0.5, 0.5);
+	glRasterPos3f(0.36, 0.07, 4.0);
+	for(int i = 0; i < str.length(); i++){
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[i]);
+	}
+	glEnable(GL_LIGHTING);
+	
+}
+
+void drawAltitudeBox(void){
+        glPushMatrix();
+        glTranslatef(.8, 0.05, 2.5);
+        glDisable(GL_LIGHTING);
+        glBegin(GL_POLYGON);
+		glColor3f(0.15, 0.05, 0.05);
+                glVertex3f(0.0, 0.3, 0.0); // #1
+                glVertex3f(0.0, 0.0, 0.0); // #2
+                glVertex3f(0.7, 0.0, 0.0); // #3
+                glVertex3f(0.7, 0.3, 0.0);
+        glEnd();
+        glEnable(GL_LIGHTING);
+        glPopMatrix();
+}
+
+void drawAirspeedBox(void){
+	glPushMatrix();
+	glTranslatef(-1.5, 0.05, 2.5);
+	glDisable(GL_LIGHTING);
+        glBegin(GL_POLYGON);
+                glColor3f(1.15, 0.05, 0.05);
+                glVertex3f(0.0, 0.3, 0.0); // #1
+                glVertex3f(0.0, 0.0, 0.0); // #2
+                glVertex3f(0.7, 0.0, 0.0); // #3
+                glVertex3f(0.7, 0.3, 0.0);
+        glEnd();
+        glEnable(GL_LIGHTING);
+        glPopMatrix();
+}
+
+void drawAirspeedText(float airspeed){
+        std:stringstream ss;
+        ss << airspeed;
+        std::string str = ss.str();
+        glDisable(GL_LIGHTING);
+        glColor3f(1.0, 0.5, 0.5);
+        glRasterPos3f(-.5, 0.07, 4.0);
+        for(int i = 0; i < str.length(); i++){
+                glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[i]);
+        }
+        glEnable(GL_LIGHTING);
+}
+
+void drawSlipBox(void){
+	glLineWidth(3.0);
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0, 0.0, 0.0);
+	glBegin(GL_LINES);
+		glVertex3f(-0.5, 2.5, 0.0);
+		glVertex3f(0.5, 2.5, 0.0);
+	glEnd();
+	glBegin(GL_LINES);
+		glVertex3f(-0.5, 2.8, 0.0);
+		glVertex3f(0.5, 2.8, 0.0);
+        glEnd();
+        glBegin(GL_LINES);
+                 glVertex3f(-0.5, 2.8, 0.0);
+                 glVertex3f(-0.5, 2.5, 0.0);
+        glEnd();
+        glBegin(GL_LINES);
+                glVertex3f(0.5, 2.8, 0.0);
+                glVertex3f(0.5, 2.5, 0.0);
+        glEnd();
+        glBegin(GL_LINES);
+                glVertex3f(-0.17, 2.8, 0.0);
+                glVertex3f(-0.17, 2.5, 0.0);
+        glEnd();
+        glBegin(GL_LINES);
+                glVertex3f(0.17, 2.8, 0.0);
+	        glVertex3f(0.17, 2.5, 0.0);
+        glEnd();
+
+	glEnable(GL_LIGHTING);
+	glMatrixMode(GL_PROJECTION);
+}
+
+void drawGlideSlopeBox(void){
+        glLineWidth(2.0);
+	glDisable(GL_LIGHTING);
+        glColor3f(1.0, 0.0, 0.0);
+	// tiny box 1
+	glBegin(GL_LINES);
+               glVertex3f(0.125, 0.12, 4.5);
+               glVertex3f(0.135, 0.12, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.12, 4.5);
+               glVertex3f(0.125, 0.11, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.11, 4.5);
+               glVertex3f(0.135, 0.11, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.135, 0.11, 4.5);
+               glVertex3f(0.135, 0.12, 4.5);
+        glEnd();
+
+
+
+        // tiny box 2
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.08, 4.5);
+               glVertex3f(0.135, 0.08, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.08, 4.5);
+               glVertex3f(0.125, 0.07, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.07, 4.5);
+               glVertex3f(0.135, 0.07, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.135, 0.07, 4.5);
+               glVertex3f(0.135, 0.08, 4.5);
+        glEnd();
+
+        // tiny box 3
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.045, 4.5);
+               glVertex3f(0.135, 0.045, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.045, 4.5);
+               glVertex3f(0.125, 0.035, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.035, 4.5);
+               glVertex3f(0.135, 0.035, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.135, 0.035, 4.5);
+               glVertex3f(0.135, 0.045, 4.5);
+        glEnd();
+
+        // tiny box 1
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.01, 4.5);
+               glVertex3f(0.135, 0.01, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.01, 4.5);
+               glVertex3f(0.125, 0.0, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, 0.0, 4.5);
+               glVertex3f(0.135, 0.0, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.135, 0.0, 4.5);
+               glVertex3f(0.135, 0.01, 4.5);
+        glEnd();
+
+
+	// last tiny box
+        glBegin(GL_LINES);
+               glVertex3f(0.125, -0.04, 4.5);
+               glVertex3f(0.135, -0.04, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, -0.04, 4.5);
+               glVertex3f(0.125, -0.03, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.125, -0.03, 4.5);
+               glVertex3f(0.135, -0.03, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.135, -0.03, 4.5);
+               glVertex3f(0.135, -0.04, 4.5);
+        glEnd();
+
+}
+
+void drawGlideSlopeBall(float position){
+        // use GLU to create a quadric surface reference
+        GLUquadricObj* planeBall = gluNewQuadric();
+        // Specificy the surface normals.
+        gluQuadricNormals(planeBall, GLU_SMOOTH);
+        // For our object reference turn texture on.
+        // Push
+        glPushMatrix();
+        glColor3f(1.0, 1.0, 0.0);
+
+        // Push
+        glPushMatrix();
+        // This controls translation: 1st arg +right, 2nd arg +up, 3rd arg +closer
+        glTranslatef(0.258, 0.15, 4.0);
+        // Setup texture binding between the references.
+        // Create the sphere with the texture and longitude & lat. divisions,
+        gluSphere(planeBall, .01, 10, 10);
+        // Pop x2
+        glPopMatrix();
+        glPopMatrix();
+        // Cleanup
+        gluDeleteQuadric(planeBall);
+}
+
+void drawLocalizerBox(float position){
+        glPushMatrix();
+        glTranslatef(0.0, 0.0, 4.5);
+        glDisable(GL_LIGHTING);
+        glBegin(GL_POLYGON);
+                glColor3f(0.0, 1.0, 0.0);
+                glVertex3f(0.09-0.05, -0.1, 0.0); // #1
+                glVertex3f(0.08-0.05, -0.1, 0.0); // #2
+                glVertex3f(0.08-0.05, -0.09, 0.0); // #3
+                glVertex3f(0.09-0.05, -0.09, 0.0);
+        glEnd();
+        glEnable(GL_LIGHTING);
+        glPopMatrix();
+}
+
+void drawSlipBall(float position){
+
+        // use GLU to create a quadric surface reference
+        GLUquadricObj* planeBall = gluNewQuadric();
+        // Specificy the surface normals.
+        gluQuadricNormals(planeBall, GLU_SMOOTH);
+        // For our object reference turn texture on.
+        // Push
+        glPushMatrix();
+        // Push
+        glPushMatrix();
+        // This controls translation: 1st arg +right, 2nd arg +up, 3rd arg +closer
+        glTranslatef(0.0, 1.60, 2.0);
+        // Setup texture binding between the references.
+        // Create the sphere with the texture and longitude & lat. divisions,
+        gluSphere(planeBall, .05, 10, 10);
+        // Pop x2
+        glPopMatrix();
+        glPopMatrix();
+        // Cleanup
+        gluDeleteQuadric(planeBall);
+
+}
+
+void drawLocalizerScale(float position){
+	glLineWidth(2.0);
+        glDisable(GL_LIGHTING);
+        glColor3f(1.0, 0.0, 0.0);
+
+
+
+        // far right
+        glBegin(GL_LINES);
+               glVertex3f(0.09, -0.1, 4.5);
+               glVertex3f(0.08, -0.1, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.08, -0.1, 4.5);
+               glVertex3f(0.08, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.08, -0.09, 4.5);
+               glVertex3f(0.09, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.09, -0.09, 4.5);
+               glVertex3f(0.09, -0.1, 4.5);
+        glEnd();
+
+
+        // 2nd from middle on right
+        glBegin(GL_LINES);
+               glVertex3f(0.05, -0.1, 4.5);
+               glVertex3f(0.04, -0.1, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.04, -0.1, 4.5);
+               glVertex3f(0.04, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.04, -0.09, 4.5);
+               glVertex3f(0.05, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.05, -0.09, 4.5);
+               glVertex3f(0.05, -0.1, 4.5);
+        glEnd();
+
+        // middle box
+        glBegin(GL_LINES);
+               glVertex3f(0.01, -0.1, 4.5);
+               glVertex3f(0.00, -0.1, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.00, -0.1, 4.5);
+               glVertex3f(0.00, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.00, -0.09, 4.5);
+               glVertex3f(0.01, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(0.01, -0.09, 4.5);
+               glVertex3f(0.01, -0.1, 4.5);
+        glEnd();
+
+        // 2nd from middle box on left
+        glBegin(GL_LINES);
+               glVertex3f(-0.04, -0.1, 4.5);
+               glVertex3f(-0.03, -0.1, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(-0.03, -0.1, 4.5);
+               glVertex3f(-0.03, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(-0.03, -0.09, 4.5);
+               glVertex3f(-0.04, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(-0.04, -0.09, 4.5);
+               glVertex3f(-0.04, -0.1, 4.5);
+        glEnd();
+
+	// far left box
+        // 2nd from middle box on left
+        glBegin(GL_LINES);
+               glVertex3f(-0.08, -0.1, 4.5);
+               glVertex3f(-0.07, -0.1, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(-0.07, -0.1, 4.5);
+               glVertex3f(-0.07, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(-0.07, -0.09, 4.5);
+               glVertex3f(-0.08, -0.09, 4.5);
+        glEnd();
+        glBegin(GL_LINES);
+               glVertex3f(-0.08, -0.09, 4.5);
+               glVertex3f(-0.08, -0.1, 4.5);
+        glEnd();
+}
+
+void drawCompassBox(float heading) {
+        glPushMatrix();
+        glTranslatef(-0.03, -0.2, 4.5);
+        glDisable(GL_LIGHTING);
+        glBegin(GL_POLYGON);
+                glColor3f(0.0, 0.05, 1.0);
+                glVertex3f(0.00, 0.05, 0.0); // #1
+                glVertex3f(0.00, 0.0, 0.0); // #2
+                glVertex3f(0.06, 0.0, 0.0); // #3
+                glVertex3f(0.06, 0.05, 0.0);
+        glEnd();
+        glEnable(GL_LIGHTING);
+        glPopMatrix();
+}
+
+void drawArch(void){
+      glLineWidth(2.0);
+      glDisable(GL_LIGHTING);
+      glColor3f(1.0, 0.0, 0.0);
+  	// middle line
+      glBegin(GL_LINES);
+               glVertex3f(0.0, 0.23, 4.5);
+               glVertex3f(0.0, 0.24, 4.5);
+      glEnd();
+	// left line
+      glBegin(GL_LINES);
+               glVertex3f(0.0, 0.05, 4.5);
+               glVertex3f(-0.1, 0.21, 4.5);
+      glEnd();
+	// right line
+      glBegin(GL_LINES);
+               glVertex3f(0.0, 0.05, 4.5);
+               glVertex3f(0.1, 0.21, 4.5);
+      glEnd();
+
+}
+
+
+void drawDecorators(void){
+      glLineWidth(4.0);
+      glDisable(GL_LIGHTING);
+      glColor3f(1.0, 0.03, 0.03);
+        // middle line
+      glBegin(GL_LINES);
+               glVertex3f(-0.175, 2.0, 4.5);
+               glVertex3f(-0.175, -0.5, 4.5);
+      glEnd();
+      glBegin(GL_LINES);
+               glVertex3f(0.165, 2.0, 4.5);
+               glVertex3f(0.165, -0.5, 4.5);
+      glEnd();
+      glEnable(GL_LIGHTING);
+}
+
+
+void drawCompassNeedle(void){
+	// TODO
+}
 
 // MakeImage usage: makeImage(fileName, textureName, hasAlpha);
 // Function from adam coffman solar-system-opengl
@@ -309,6 +729,7 @@ void display(void) {
 	gluPerspective(60, 1, 0.2, 10.0);
 	// Clear buffers.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClearColor(0.05, 0.05, 0.05, 1.0);
 	// Load matrix modes.
 	glMatrixMode(GL_MODELVIEW);
 	// Clean
@@ -344,7 +765,20 @@ void display(void) {
 	drawCompass(compassTexture);
 	drawAirplaneRightWing();
 	drawAirplaneLeftWing();
-	drawAirplaneTinyBall();
+//	drawAirplaneTinyBall();
+	drawSlipBall(0);
+	drawAltitudeBox();
+	drawAltitudeText(2000);
+	drawAirspeedBox();
+	drawAirspeedText(36.2);
+	drawSlipBox();
+	drawGlideSlopeBox();
+	drawGlideSlopeBall(1.0);
+	drawLocalizerScale(1.0);
+	drawLocalizerBox(1.0);
+	drawArch();
+	drawDecorators();
+//	drawCompassBox(1.0);
 	//drawAltStrip(altitudeTexture);
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
@@ -385,7 +819,7 @@ int main(int argc, char **argv) {
 	glViewport(0,0, 500, 500);	
 			
 	// Set the initial display position in pixels.
-	glutInitWindowPosition(100, 100);	// X and Y Location
+	glutInitWindowPosition(200, 200);	// X and Y Location
 	
 	// Initiatize the GLUT library, and negotiate a session,
 	//	with the window system.

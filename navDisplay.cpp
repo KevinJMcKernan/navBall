@@ -25,16 +25,16 @@ GLuint altitudeTexture = 3;
 GLuint compassTexture = 4;
 
 // BMP image file. You can make one in MS paint. 
-const char navBallFileName[] = "Bitmaps/t2.bmp";
-const char airSFileName[] = "Bitmaps/t5s.png";
-const char altitudeFileName[] = "Bitmaps/t5.png";
-const char compassFileName[] =  "Bitmaps/t5c.png";
+const char navBallFileName[] = "imageTextures/ball.png";
+const char airSFileName[] = "imageTextures/t6s.png";
+const char altitudeFileName[] = "imageTextures/t6a.png";
+const char compassFileName[] =  "imageTextures/t6c.png";
 
-// Errors
-GLenum err;
-
+// Temporary values for moving objects.
 GLfloat moveAirStripUpTest = 0;
 GLfloat moveAltitudeUpTest = 0;
+
+// TODO: Create permanant movement values.
 
 // Constants for our lighting and image. Edit these to change 
 // Lighting.
@@ -93,6 +93,8 @@ void drawNavBall(GLuint navBallTexture, GLfloat navBallRadius){
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	// Push
         glPushMatrix();
+	// This controls translation: 1st arg +right, 2nd arg +up, 3rd arg +closer
+	glTranslatef(0.0, 0.5, -0.2);
 	// This controls rotation.
 	glRotatef(theta[0], 0.0, 1.0, 0.0);
 	glRotatef(theta[0], 1.0, 0.0, 0.0);
@@ -121,7 +123,7 @@ void drawAltitudeStrip(GLuint altitudeTexture){
 	// first arguement is left/right
 	// 2, -5, 4
 	glTranslatef(.95, -3.0 + (-moveAltitudeUpTest), 2.0);
-
+	// Create polygon object that has bound texture.
         glBegin(GL_POLYGON);
                 glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
                 glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
@@ -145,7 +147,7 @@ void drawAirSpeedStrip(GLuint airSpeedTexture){
         // Second arguement is up
         // first arguement is left/right
         // 2, -5, 4
-        glTranslatef(-1.95, -3.0 + (-moveAirStripUpTest), 2.0);
+        glTranslatef(-2.0, -3.0 + (-moveAirStripUpTest), 2.0);
         glBegin(GL_POLYGON);
                 glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
                 glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
@@ -157,6 +159,7 @@ void drawAirSpeedStrip(GLuint airSpeedTexture){
         glDisable(GL_TEXTURE_2D);
 }
 
+// Draw the compass strip
 void drawCompass(GLuint compassTexture) {
         glEnable(GL_TEXTURE_2D);
         glPushMatrix();
@@ -180,6 +183,56 @@ void drawCompass(GLuint compassTexture) {
         glDisable(GL_TEXTURE_2D);
 }
 
+// Draw airplane  Left Wing
+void drawAirplaneLeftWing(void){
+	glPushMatrix();
+        glTranslatef(-0.4, 0.5, 2.0);
+        glBegin(GL_POLYGON);
+                glVertex3f(0.0, 0.1, 0.0); // #1               
+		glVertex3f(0.0, 0.0, 0.0); // #2
+		glVertex3f(0.4, 0.0, 0.0); // #3
+		glVertex3f(0.4, 0.1, 0.0);
+        glEnd();
+	glPopMatrix();
+}
+
+// Draw airplane right wing
+void drawAirplaneRightWing(void){
+        glPushMatrix();
+        glTranslatef(0.4, 0.5, 2.0);
+        glBegin(GL_POLYGON);
+                glVertex3f(0.0, 0.1, 0.0); // #1
+                glVertex3f(0.0, 0.0, 0.0); // #2
+                glVertex3f(0.4, 0.0, 0.0); // #3
+                glVertex3f(0.4, 0.1, 0.0);
+        glEnd();
+        glPopMatrix();
+}
+
+void drawAirplaneTinyBall(void){
+        // use GLU to create a quadric surface reference
+        GLUquadricObj* planeBall = gluNewQuadric();
+        // Specificy the surface normals.
+        gluQuadricNormals(planeBall, GLU_SMOOTH);
+        // For our object reference turn texture on.
+        // Push
+        glPushMatrix();
+        // Push
+        glPushMatrix();
+        // This controls translation: 1st arg +right, 2nd arg +up, 3rd arg +closer
+        glTranslatef(0.0, 1.0, 2.0);
+        // Setup texture binding between the references.
+        // Create the sphere with the texture and longitude & lat. divisions,
+        gluSphere(planeBall, .05, 10, 10);
+        // Pop x2
+        glPopMatrix();
+        glPopMatrix();
+        // Cleanup
+        gluDeleteQuadric(planeBall);
+
+}
+
+
 // MakeImage usage: makeImage(fileName, textureName, hasAlpha);
 // Function from adam coffman solar-system-opengl
 // Uses F.S. Hill's RGBPixmap files.
@@ -193,35 +246,47 @@ void makeImage(const char bitmapFilename[], GLuint &textureName, bool hasAlpha) 
 // Call previously defined function, allows for expansion with more objects.
 // Make all our images: ex. NavBall texture, sliding rule textures.
 void makeAllImages() {
-       makeImage(navBallFileName, navBallTexture, false);
-        // Add other images you want to make below.
+	// Use bitmap to create texture for navBall
+	// makeImage(navBallFileName, navBallTexture, false);
+	navBallTexture = SOIL_load_OGL_texture(
+		navBallFileName,
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+
+	// Use png to create texture for strip
 	altitudeTexture = SOIL_load_OGL_texture(
 		altitudeFileName,
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
 	); 
-
+	// Error Check
+	if(0 == altitudeTexture) {
+		printf("Error loading texture!\n");
+	}
+	// Use png to create texture for strip.
 	airSpeedTexture = SOIL_load_OGL_texture(
 	        airSFileName,
                 SOIL_LOAD_AUTO,
                 SOIL_CREATE_NEW_ID,
                 SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
         );
-
+	// Error Check
+	if(airSpeedTexture == 0) {
+		printf("Error loading texture!\n");
+	}
+	// Use png to create texture for strip.
 	compassTexture = SOIL_load_OGL_texture(
                 compassFileName,
                 SOIL_LOAD_AUTO,
                 SOIL_CREATE_NEW_ID,
                 SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-        ); 
-
-
-
-	if(0 == altitudeTexture) {
-		printf("Error loading!");
+        );
+	if(compassTexture == 0){
+		printf("Error loading texture!\n");
 	}
-
 
         return;
 }
@@ -247,8 +312,7 @@ void display(void) {
 	// Load matrix modes.
 	glMatrixMode(GL_MODELVIEW);
 	// Clean
-	glLoadIdentity();	
-	
+	glLoadIdentity();
 	// TODO move stuff to a initGL FCN. 
 	//	For example a cleanStart FCN.
 	
@@ -278,7 +342,9 @@ void display(void) {
 	drawAirSpeedStrip(airSpeedTexture);
 	drawAltitudeStrip(altitudeTexture);
 	drawCompass(compassTexture);
-
+	drawAirplaneRightWing();
+	drawAirplaneLeftWing();
+	drawAirplaneTinyBall();
 	//drawAltStrip(altitudeTexture);
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();

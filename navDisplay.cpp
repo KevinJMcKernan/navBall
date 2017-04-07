@@ -198,24 +198,20 @@ printf( " pitch = %f roll = %f \n",destination.pitch, destination.roll);
 // get the struct data from server and populate struct
 
 void getDataFillStruct( void  ){// set globaly: struct flightData position
-  printf("getDataFillStruct(void)-> EnteredFunction\n");
 	// call client to fill struct with destination // destination = destination // then rotates ball 1 degree for each
 	//printf("Received from server:");
 	// call the client struct filler
 	receiveFlightData();
-  printf("getDataFillStruct(void)-> after receiveFlightData()\n");
 	//check pos of pitch
 	if( position.pitch < destination.pitch ){
 		glRotatef(1,1,0, 0);
 
     position.pitch += 1;
 	}
-
 	if(position.pitch > destination.pitch ){
 		glRotatef(-1,1,0, 0);
 		position.pitch -= 1;
 	}
-	//check pos of roll
 	if(position.roll < destination.roll){
 		glRotatef(1,0,1, 0);
 		position.roll += 1;
@@ -250,9 +246,10 @@ void drawNavBall(GLuint navBallTexture, GLfloat navBallRadius){
 	//glRotatef(180.0, 0.0, 1.0, 0.0);
 	//glRotatef(90.0, 0.0, 0.0, 1.0);// this rotates to hz
 	//glRotatef(theta[0], 0.0, 1.0, 0.0);
-	glRotatef(theta[0], 1.0, 0.0, 0.0);
- printf("\n%f\n", destination.roll);
- glRotatef(destination.roll, 0.0, 1.0, 0.0);
+  glRotatef(theta[0], 1.0, 0.0, 0.0);
+  printf("\n%f\n", destination.roll);
+  glRotatef(destination.roll, 0.0, 1.0, 0.0);
+  glRotatef(destination.heading, 0.0, 0.0, 1.0);
 
 	// Setup texture binding between the references.
         glBindTexture(GL_TEXTURE_2D, navBallTexture);
@@ -280,15 +277,15 @@ void drawAltitudeStrip(GLuint altitudeTexture){
 	// 2, -5, 4
 	glTranslatef(.95, -3.0 + (-moveAltitudeUpTest), 2.0);
 	// Create polygon object that has bound texture.
-        glBegin(GL_POLYGON);
-                glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
-                glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
-                glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0, 0.0, 0.0);
-                glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 16.0, 0.0);
-        glEnd();
-        glPopMatrix();
-        glPopMatrix();
-        glDisable(GL_TEXTURE_2D);
+  glBegin(GL_POLYGON);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0, 0.0, 0.0);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 16.0, 0.0);
+  glEnd();
+  glPopMatrix();
+  glPopMatrix();
+  glDisable(GL_TEXTURE_2D);
 }
 
 // Draw the Altitude Strip
@@ -345,7 +342,7 @@ void drawAirplaneLeftWing(void){
         glTranslatef(-0.55, 0.30, 2.0); // 1: left/right, 2: upDown
 	glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
-		glColor3f(1.0, 0.05, 0.05);
+		glColor3f(0.0, 0.0, 0.0);
                 glVertex3f(0.0, 0.05, 0.0); // #1
 		glVertex3f(0.0, 0.0, 0.0); // #2
 		glVertex3f(0.4, 0.0, 0.0); // #3
@@ -358,10 +355,10 @@ void drawAirplaneLeftWing(void){
 // Draw airplane right wing
 void drawAirplaneRightWing(void){
         glPushMatrix();
-        glTranslatef(.155, 0.30, 2.0);
+        glTranslatef(.186, 0.30, 2.0);
 	glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
-		glColor3f(1.0, 0.05, 0.05);
+		glColor3f(0.0, 0.0, 0.0);
                 glVertex3f(0.0, 0.05, 0.0); // #1
                 glVertex3f(0.0, 0.0, 0.0); // #2
                 glVertex3f(0.4, 0.0, 0.0); // #3
@@ -399,8 +396,8 @@ void drawAltitudeText(int altitude){
 	ss << altitude;
 	std::string str = ss.str();
 	glDisable(GL_LIGHTING);
-	glColor3f(1.0, 0.5, 0.5);
-	glRasterPos3f(0.36, 0.07, 4.0);
+	glColor3f(0.0, 0.0, 0.0);
+	glRasterPos3f(0.398, 0.07, 4.0);
 	for(int i = 0; i < str.length(); i++){
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[i]);
 	}
@@ -410,14 +407,14 @@ void drawAltitudeText(int altitude){
 
 void drawAltitudeBox(void){
         glPushMatrix();
-        glTranslatef(.8, 0.05, 2.5);
+        glTranslatef(.85, 0.05, 2.5);
         glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
-		glColor3f(0.15, 0.05, 0.05);
-                glVertex3f(0.0, 0.3, 0.0); // #1
+		glColor3f(0.0, 1.0, 0.0);
+                glVertex3f(0.0, 0.29, 0.0); // #1
                 glVertex3f(0.0, 0.0, 0.0); // #2
-                glVertex3f(0.7, 0.0, 0.0); // #3
-                glVertex3f(0.7, 0.3, 0.0);
+                glVertex3f(0.6, 0.0, 0.0); // #3
+                glVertex3f(0.6, 0.29, 0.0);
         glEnd();
         glEnable(GL_LIGHTING);
         glPopMatrix();
@@ -428,11 +425,11 @@ void drawAirspeedBox(void){
 	glTranslatef(-1.5, 0.05, 2.5);
 	glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
-                glColor3f(1.15, 0.05, 0.05);
-                glVertex3f(0.0, 0.3, 0.0); // #1
+                glColor3f(0, 255, 0);
+                glVertex3f(0.0, 0.29, 0.0); // #1
                 glVertex3f(0.0, 0.0, 0.0); // #2
-                glVertex3f(0.7, 0.0, 0.0); // #3
-                glVertex3f(0.7, 0.3, 0.0);
+                glVertex3f(0.6, 0.0, 0.0); // #3
+                glVertex3f(0.6, 0.29, 0.0);
         glEnd();
         glEnable(GL_LIGHTING);
         glPopMatrix();
@@ -443,8 +440,8 @@ void drawAirspeedText(float airspeed){
         ss << airspeed;
         std::string str = ss.str();
         glDisable(GL_LIGHTING);
-        glColor3f(1.0, 0.5, 0.5);
-        glRasterPos3f(-.5, 0.07, 4.0);
+        glColor3f(0.0, 0.0, 0.0);
+        glRasterPos3f(-.525, 0.07, 4.0);
         for(int i = 0; i < str.length(); i++){
                 glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[i]);
         }
@@ -454,7 +451,7 @@ void drawAirspeedText(float airspeed){
 void drawSlipBox(void){
 	glLineWidth(3.0);
 	glDisable(GL_LIGHTING);
-	glColor3f(1.0, 0.0, 0.0);
+	glColor3f(0.0, 1.0, 0.0);
 	glBegin(GL_LINES);
 		glVertex3f(-0.5, 2.5, 0.0);
 		glVertex3f(0.5, 2.5, 0.0);
@@ -487,7 +484,7 @@ void drawSlipBox(void){
 void drawGlideSlopeBox(void){
         glLineWidth(2.0);
 	glDisable(GL_LIGHTING);
-        glColor3f(1.0, 0.0, 0.0);
+        glColor3f(0.0, 1.0, 0.0);
 	// tiny box 1
 	glBegin(GL_LINES);
                glVertex3f(0.125, 0.12, 4.5);
@@ -591,7 +588,7 @@ void drawGlideSlopeBall(float position){
         // For our object reference turn texture on.
         // Push
         glPushMatrix();
-        glColor3f(1.0, 1.0, 0.0);
+        glColor3f(127.0, 0.0, 255.0);
 
         // Push
         glPushMatrix();
@@ -612,11 +609,47 @@ void drawLocalizerBox(float position){
         glTranslatef(0.0, 0.0, 4.5);
         glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
-                glColor3f(0.0, 1.0, 0.0);
-                glVertex3f(0.09-0.05, -0.1, 0.0); // #1
-                glVertex3f(0.08-0.05, -0.1, 0.0); // #2
-                glVertex3f(0.08-0.05, -0.09, 0.0); // #3
-                glVertex3f(0.09-0.05, -0.09, 0.0);
+        glColor3f(127.0, 0.0, 255.0);
+// if
+        if( (destination.localizerScale <= -1.5)&&(destination.localizerScale >= -2.0) ){
+            // grab coordinates of leftest
+            glVertex3f(-0.08, -0.14, 0.0); // #1
+            glVertex3f(-0.07, -0.14, 0.0); // #2
+            glVertex3f(-0.07, -0.13, 0.0); // #3
+            glVertex3f(-0.081, -0.13, 0.0);
+        }
+        else if((destination.localizerScale <= -0.5)&&(destination.localizerScale >-1.5)){
+            // grab second to left most
+            glVertex3f(-0.04, -0.14, 0.0); // #1
+            glVertex3f(-0.03, -0.14, 0.0); // #2
+            glVertex3f(-0.03, -0.13, 0.0); // #3
+            glVertex3f(-0.04, -0.13, 0.0);
+        }
+        else if((destination.localizerScale <= 1.5)&&(destination.localizerScale >= 0.5)){
+          // grab second to right
+          glVertex3f(0.1-0.05, -0.14, 0.0); // #1
+          glVertex3f(0.09-0.05, -0.14, 0.0); // #2
+          glVertex3f(0.09-0.05, -0.13, 0.0); // #3
+          glVertex3f(0.1-0.05, -0.13, 0.0);
+        }
+        else if((destination.localizerScale <= 2)&&(destination.localizerScale > 1.5)){
+          // grab rightmost
+          //glVertex3f ( x , y , z)
+           glVertex3f(0.09, -0.14, 0.0); // #1
+           glVertex3f(0.08, -0.14, 0.0); // #2
+           glVertex3f(0.08, -0.13, 0.0); // #3
+           glVertex3f(0.09, -0.13, 0.0);
+        }
+        else{
+          // put in center
+          glVertex3f(0.01, -0.14, 0.0); // #1
+          glVertex3f(0.00, -0.14, 0.0); // #2
+          glVertex3f(0.00, -0.13, 0.0); // #3
+          glVertex3f(0.01, -0.13, 0.0);
+        }
+
+
+
         glEnd();
         glEnable(GL_LIGHTING);
         glPopMatrix();
@@ -649,100 +682,99 @@ void drawSlipBall(float position){
 void drawLocalizerScale(float position){
 	glLineWidth(2.0);
         glDisable(GL_LIGHTING);
-        glColor3f(1.0, 0.0, 0.0);
-
+        glColor3f(0.0, 1.0, 0.0);
 
 
         // far right
         glBegin(GL_LINES);
-               glVertex3f(0.09, -0.1, 4.5);
-               glVertex3f(0.08, -0.1, 4.5);
+               glVertex3f(0.09, -0.14, 4.5);
+               glVertex3f(0.08, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.08, -0.1, 4.5);
-               glVertex3f(0.08, -0.09, 4.5);
+               glVertex3f(0.08, -0.14, 4.5);
+               glVertex3f(0.08, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.08, -0.09, 4.5);
-               glVertex3f(0.09, -0.09, 4.5);
+               glVertex3f(0.08, -0.13, 4.5);
+               glVertex3f(0.09, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.09, -0.09, 4.5);
-               glVertex3f(0.09, -0.1, 4.5);
+               glVertex3f(0.09, -0.13, 4.5);
+               glVertex3f(0.09, -0.14, 4.5);
         glEnd();
 
 
         // 2nd from middle on right
         glBegin(GL_LINES);
-               glVertex3f(0.05, -0.1, 4.5);
-               glVertex3f(0.04, -0.1, 4.5);
+               glVertex3f(0.05, -0.14, 4.5);
+               glVertex3f(0.04, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.04, -0.1, 4.5);
-               glVertex3f(0.04, -0.09, 4.5);
+               glVertex3f(0.04, -0.14, 4.5);
+               glVertex3f(0.04, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.04, -0.09, 4.5);
-               glVertex3f(0.05, -0.09, 4.5);
+               glVertex3f(0.04, -0.13, 4.5);
+               glVertex3f(0.05, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.05, -0.09, 4.5);
-               glVertex3f(0.05, -0.1, 4.5);
+               glVertex3f(0.05, -0.13, 4.5);
+               glVertex3f(0.05, -0.14, 4.5);
         glEnd();
 
         // middle box
         glBegin(GL_LINES);
-               glVertex3f(0.01, -0.1, 4.5);
-               glVertex3f(0.00, -0.1, 4.5);
+               glVertex3f(0.01, -0.14, 4.5);
+               glVertex3f(0.00, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.00, -0.1, 4.5);
-               glVertex3f(0.00, -0.09, 4.5);
+               glVertex3f(0.00, -0.14, 4.5);
+               glVertex3f(0.00, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.00, -0.09, 4.5);
-               glVertex3f(0.01, -0.09, 4.5);
+               glVertex3f(0.00, -0.13, 4.5);
+               glVertex3f(0.01, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.01, -0.09, 4.5);
-               glVertex3f(0.01, -0.1, 4.5);
+               glVertex3f(0.01, -0.13, 4.5);
+               glVertex3f(0.01, -0.14, 4.5);
         glEnd();
 
         // 2nd from middle box on left
         glBegin(GL_LINES);
-               glVertex3f(-0.04, -0.1, 4.5);
-               glVertex3f(-0.03, -0.1, 4.5);
+               glVertex3f(-0.04, -0.14, 4.5);
+               glVertex3f(-0.03, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.03, -0.1, 4.5);
-               glVertex3f(-0.03, -0.09, 4.5);
+               glVertex3f(-0.03, -0.14, 4.5);
+               glVertex3f(-0.03, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.03, -0.09, 4.5);
-               glVertex3f(-0.04, -0.09, 4.5);
+               glVertex3f(-0.03, -0.13, 4.5);
+               glVertex3f(-0.04, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.04, -0.09, 4.5);
-               glVertex3f(-0.04, -0.1, 4.5);
+               glVertex3f(-0.04, -0.13, 4.5);
+               glVertex3f(-0.04, -0.14, 4.5);
         glEnd();
 
 	// far left box
         // 2nd from middle box on left
         glBegin(GL_LINES);
-               glVertex3f(-0.08, -0.1, 4.5);
-               glVertex3f(-0.07, -0.1, 4.5);
+               glVertex3f(-0.08, -0.14, 4.5);
+               glVertex3f(-0.07, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.07, -0.1, 4.5);
-               glVertex3f(-0.07, -0.09, 4.5);
+               glVertex3f(-0.07, -0.14, 4.5);
+               glVertex3f(-0.07, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.07, -0.09, 4.5);
-               glVertex3f(-0.08, -0.09, 4.5);
+               glVertex3f(-0.07, -0.13, 4.5);
+               glVertex3f(-0.08, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.08, -0.09, 4.5);
-               glVertex3f(-0.08, -0.1, 4.5);
+               glVertex3f(-0.08, -0.13, 4.5);
+               glVertex3f(-0.08, -0.14, 4.5);
         glEnd();
 }
 
@@ -762,13 +794,13 @@ void drawCompassBox(float heading) {
 }
 
 void drawArch(void){
-      glLineWidth(2.0);
+      glLineWidth(4.0);
       glDisable(GL_LIGHTING);
-      glColor3f(1.0, 0.0, 0.0);
+      glColor3f(0.0, 0.0, 0.0);
   	// middle line
       glBegin(GL_LINES);
-               glVertex3f(0.0, 0.23, 4.5);
-               glVertex3f(0.0, 0.24, 4.5);
+               glVertex3f(0.0, 0.11, 4.5);
+               glVertex3f(0.0, 0.10, 4.5);
       glEnd();
 	// left line
       glBegin(GL_LINES);
@@ -787,7 +819,7 @@ void drawArch(void){
 void drawDecorators(void){
       glLineWidth(4.0);
       glDisable(GL_LIGHTING);
-      glColor3f(1.0, 0.03, 0.03);
+      glColor3f(1.0,1.0,1.0);
         // middle line
       glBegin(GL_LINES);
                glVertex3f(-0.175, 2.0, 4.5);

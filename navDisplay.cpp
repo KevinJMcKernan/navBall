@@ -1029,9 +1029,9 @@ void display(void) {
 //	drawAirplaneTinyBall();
 	drawSlipBall(0);
 	drawAltitudeBox();
-	drawAltitudeText(2000);
+	drawAltitudeText(destination.altitude);
 	drawAirspeedBox();
-	drawAirspeedText(36.2);
+	drawAirspeedText(destination.airspeed);
 	drawSlipBox();
 	drawGlideSlopeBox();
 	drawGlideSlopeBall(1.0);

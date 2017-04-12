@@ -249,10 +249,10 @@ void drawNavBall(GLuint navBallTexture, GLfloat navBallRadius){
 	//glRotatef(180.0, 0.0, 1.0, 0.0);
 	//glRotatef(90.0, 0.0, 0.0, 1.0);// this rotates to hz
 	//glRotatef(theta[0], 0.0, 1.0, 0.0);
-  glRotatef(theta[0], 1.0, 0.0, 0.0);
-  printf("\n%f\n", destination.roll);
-  glRotatef(destination.roll, 0.0, 1.0, 0.0);
-  glRotatef(destination.heading, 0.0, 0.0, 1.0);
+	glRotatef(theta[0], 1.0, 0.0, 0.0);
+	printf("\n%f\n", destination.roll);
+	glRotatef(destination.roll, 0.0, 1.0, 0.0);
+	glRotatef(destination.heading, 0.0, 0.0, 1.0);
 
 	// Setup texture binding between the references.
         glBindTexture(GL_TEXTURE_2D, navBallTexture);
@@ -280,15 +280,15 @@ void drawAltitudeStrip(GLuint altitudeTexture){
 	// 2, -5, 4
 	glTranslatef(.95, -3.0 + (-moveAltitudeUpTest), 2.0);
 	// Create polygon object that has bound texture.
-  glBegin(GL_POLYGON);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0, 0.0, 0.0);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 16.0, 0.0);
-  glEnd();
-  glPopMatrix();
-  glPopMatrix();
-  glDisable(GL_TEXTURE_2D);
+	glBegin(GL_POLYGON);
+	    glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
+	    glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
+	    glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0, 0.0, 0.0);
+	    glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 16.0, 0.0);
+	glEnd();
+	glPopMatrix();
+	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
 }
 
 // Draw the Altitude Strip
@@ -413,7 +413,7 @@ void drawAltitudeBox(void){
         glTranslatef(.85, 0.05, 2.5);
         glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
-		glColor3f(0.0, 1.0, 0.0);
+		glColor3f(0.0, 0.400, 0.010);
                 glVertex3f(0.0, 0.29, 0.0); // #1
                 glVertex3f(0.0, 0.0, 0.0); // #2
                 glVertex3f(0.6, 0.0, 0.0); // #3
@@ -425,10 +425,10 @@ void drawAltitudeBox(void){
 
 void drawAirspeedBox(void){
 	glPushMatrix();
-	glTranslatef(-1.5, 0.05, 2.5);
+	glTranslatef(-1.49, 0.05, 2.5);
 	glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
-                glColor3f(0, 255, 0);
+                glColor3f(0, 0.400, 0.010);
                 glVertex3f(0.0, 0.29, 0.0); // #1
                 glVertex3f(0.0, 0.0, 0.0); // #2
                 glVertex3f(0.6, 0.0, 0.0); // #3
@@ -847,7 +847,6 @@ void drawRoll(void){
 		glBegin(GL_POLYGON);
 			glVertex3f(xInner, yInner, -2.0);
 			glVertex3f(x2, y2, -2.0);
-
 			glVertex3f(x1, y1, -2.0);
 		glEnd();
 		a = (PI/180)*(i*45.0);
@@ -857,29 +856,56 @@ void drawRoll(void){
 
 
 void drawDecorators(void){
-      glLineWidth(4.0);
-      glDisable(GL_LIGHTING);
-      glColor3f(1.0,1.0,1.0);
-        // middle line
-      glBegin(GL_LINES);
+	glLineWidth(4.0);
+	glDisable(GL_LIGHTING);
+	glColor3f(0.6, 0.6, 0.6);
+        // Left Line
+	glBegin(GL_LINES);
                glVertex3f(-0.175, 2.0, 4.5);
                glVertex3f(-0.175, -0.5, 4.5);
-      glEnd();
-      glBegin(GL_LINES);
+	glEnd();
+	// Right Line
+	glBegin(GL_LINES);
                glVertex3f(0.165, 2.0, 4.5);
                glVertex3f(0.165, -0.5, 4.5);
-      glEnd();
-      glEnable(GL_LIGHTING);
+	glEnd();
+	// Compass Strip Dividing Line
+	glBegin(GL_LINES);
+		glVertex3f(-0.175, -0.185, 4.5);
+		glVertex3f(0.165, -0.185, 4.5);
+	glEnd();
+	// Box Box
+	glLineWidth(2.0);
+        glBegin(GL_LINES); // Top Side
+                glVertex3f(-0.175, 0.07, 4.5);
+                glVertex3f(-0.3, 0.07, 4.5);
+        glEnd();
+        glBegin(GL_LINES); // Bottom
+                glVertex3f(-0.175, 0.008, 4.5);
+                glVertex3f(-0.3, 0.008, 4.5);
+        glEnd();
+	// Box Box
+	glBegin(GL_LINES);
+		glVertex3f(0.17, 0.07, 4.5);
+		glVertex3f(0.3, 0.07, 4.5);
+	glEnd();
+	glBegin(GL_LINES);
+		glVertex3f(0.17, 0.008, 4.5);
+		glVertex3f(0.3, 0.008, 4.5);
+	glEnd();
+	
+	glEnable(GL_LIGHTING);
+
 }
 
 
 void drawCompassNeedle(void){
       glLineWidth(8.0);
       glDisable(GL_LIGHTING);
-      glColor3f(0.244, 0.200, 0.066);
+      glColor3f(0.500, 0.216, 0.066);
         // middle line
       glBegin(GL_LINES);
-               glVertex3f(0.0, -0.2-.01, 4.5);
+               glVertex3f(0.0, -0.2 - 0.01, 4.5);
                glVertex3f(0.0, -0.3, 4.5);
       glEnd();
 

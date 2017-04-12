@@ -110,6 +110,7 @@ GLfloat moveAltitudeUpTest = 0;
 // This specifies light position.
 
 // First value raises light.
+//
 const GLfloat LIGHT_0_POSITION[] = {1.0, 0.0, 1.0, 0.0}; 	// Light Position.
 // Ambient light is the light already present in the scene.
 const GLfloat LIGHT_AMBIENT[] = {1.0, 1.0, 1.0, 1.0};		// RGBA ambient lighting. was .8 x 3
@@ -121,10 +122,6 @@ const GLfloat LIGHT_SPECULAR[] = {1.0, 1.0, 1.0, 1.0};		// Specular settings.
 const GLfloat ASPECT_RATIO = 1.0;				// We could probably bump this down to 1.0
 // TODO: edit LIGHT_MODEL_AMBIETN VALUES.
 const GLfloat LIGHT_MODEL_AMBIENT[] = {1.0, 1.0, 1.0, 1.0}; // was .2, .2, .2, 1.0
-
-// Time measurement Variables
-struct timeval tv1;
-struct timeval tv2;
 
 // General Variable for manipulating our Ball.
 GLfloat theta[] = {0.0, 0.0, 0.0};	// Used in our display function.
@@ -799,60 +796,30 @@ void drawCompassBox(float heading) {
 
 // Draw Roll.
 void drawRoll(void){
+	glLineWidth(4.0);
 	glDisable(GL_LIGHTING);
-	glColor3f(1.0, 1.0, 1.0);
-	// Various values. 
-	double cy = 0.5;	// Center of sphere x
-	double cx = 0.0;	// Center of sphere y
-	double x = 0.0;		// Value for XCoord of one vertex of the dash
-	double y = 0.0;		// Value for YCoord of one vertex of the dash
-	double x1 = 0.0;
-	double y1 = 0.0;
-	double x2 = 0.0;
-	double y2 = 0.0;
-	double xInner = 0.0;	// Inner XCoord
-	double yInner = 0.0;	// Inner YCoord
-	double r = 2.3;		// Radius of sphere.
-	double a = 0.0;		// Angle in degrees.
+	glColor3f(1.0, 0.0, 0.0);
+	double cy = 0.5;
+	double cx = 0.0;
+	double x = 0.0;
+	double y = 0.0;
+	double r = 2.3;
+	double a = 0.0;
 	int i = 0;
-	// This draws the fine grain markers every 11.25 degrees.
-	for(i = 3; i < 14; i++){
+	for(i = 0; i < 15; i++){
 		// Outer Point
-		x = cx + r * cos(a); 	
+		x = cx + r * cos(a);
 		y = cy + r * sin(a);
-		// Inner Point: smaller circle circumscribed. 
-		xInner = cx + (r - .1) * cos(a);
-		yInner = cy + (r - .1) * sin(a);
-		// Draw the dashes
-		glLineWidth(1.0);
+		// Inner Point just 0.0, 0.5 the center of circle
+		
+		// middle line
         	glBegin(GL_LINES);
 			glVertex3f(x, y, -2.0); // outer point
-        	        glVertex3f(xInner, yInner, -2.0); // inner point
+        	        glVertex3f(0.0, 0.5, -2.0); // inner point
 	        glEnd();
-		a = (PI/180) * (i*11.25);
+		a = a + .02 ;
+		printf("The value of A is %d\n", a); 
 	}
-	a = 0;
-	// This draws the the triangles every 45*
-	for(i = 1; i < 5; i++){
-		// Inner Point of Triangle
- 		xInner = cx + (r - .1) * cos(a);
-		yInner = cy + (r - .1) * sin(a);
-		// Outer Point 1
-                x1 = cx + (r + .1) * cos(a - 0.0314);    
-                y1 = cy + (r + .1) * sin(a - 0.0314);
-		// Outer Point 2
-                x2 = cx + (r + .1) * cos(a + 0.0314);    
-                y2 = cy + (r + .1)  * sin(a + 0.0314);
-		glLineWidth(2.0);
-		glBegin(GL_POLYGON);
-			glVertex3f(xInner, yInner, -2.0);
-			glVertex3f(x2, y2, -2.0);
-
-			glVertex3f(x1, y1, -2.0);
-		glEnd();
-		a = (PI/180)*(i*45.0);
-	}
-
 }
 
 
@@ -874,15 +841,7 @@ void drawDecorators(void){
 
 
 void drawCompassNeedle(void){
-      glLineWidth(8.0);
-      glDisable(GL_LIGHTING);
-      glColor3f(0.244, 0.200, 0.066);
-        // middle line
-      glBegin(GL_LINES);
-               glVertex3f(0.0, -0.2-.01, 4.5);
-               glVertex3f(0.0, -0.3, 4.5);
-      glEnd();
-
+	// TODO
 }
 
 // MakeImage usage: makeImage(fileName, textureName, hasAlpha);
@@ -946,11 +905,11 @@ void makeAllImages() {
 //GLfloat theta[] = {(-90.0+destination.pitch), 0.0, 0.0};	// Used in our display function.
 // Display FCN
 void display(void) {
-	
+
   getDataFillStruct();
   // Initialize lighting model
   theta[0] =  destination.pitch-90;
-	gettimeofday(&tv1, NULL);
+
 	// Initialize lighting model
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LIGHT_MODEL_AMBIENT);
 	// Enable the lighting model.
@@ -1013,7 +972,6 @@ void display(void) {
 	drawLocalizerBox(1.0);
 	drawRoll();
 	drawDecorators();
-	drawCompassNeedle();
 //	drawCompassBox(1.0);
 	//drawAltStrip(altitudeTexture);
 	glDisable(GL_LIGHTING);
@@ -1023,8 +981,6 @@ void display(void) {
 	// Reference:
 	glFlush(); // Flush the OpenGL buffers to the window
 //printf(" void display(void)-> eof\n");
-	gettimeofday(&tv2, NULL);
-	printf("Time to render image, once data recieved is: %ld microseconds\n", tv2.tv_usec-tv1.tv_usec);
 }
 
 // Reshape function. Not sure if we need this but tutorials have it.

@@ -1,0 +1,16 @@
+x = cx+r*cos(a)
+y = cy + r * sin(a)
+
+cx = origin x
+cy = origin y
+
+a the angle 
+
+include math.g
+
+#define PI 3.14159265
+double val = PI * blah
+
+struct timeval tv
+gettimeofday(&tv, NULL);
+return tv.tv_usec

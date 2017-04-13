@@ -95,7 +95,7 @@ const char navBallFileName[] = "imageTextures/newBall.png";
 
 const char airSFileName[] = "imageTextures/t6s.png";
 const char altitudeFileName[] = "imageTextures/t6a.png";
-const char compassFileName[] =  "imageTextures/t6c.png";
+const char compassFileName[] =  "imageTextures/compassFinal.png";
 
 // Temporary values for moving objects.
 GLfloat moveAirStripUpTest = 3;
@@ -298,7 +298,7 @@ void drawAirSpeedStrip(GLuint airSpeedTexture){
         // first arguement is left/right
         // 2, -5, 4
 	// Finding zero position.
-        glTranslatef(-2.0, -3.1, 2.0);
+        glTranslatef(-2.0, -2.5 - (.0455 * destination.airspeed), 2.0);
         glBegin(GL_POLYGON);
                 glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
                 glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
@@ -322,7 +322,7 @@ void drawCompass(GLuint compassTexture) {
         // Second arguement is up
         // first arguement is left/right
         // 2, -5, 4
-        glTranslatef(-8.0, -2.15, 1.9);
+        glTranslatef(-1.5 +(.0335 * destination.heading), -2.15, 1.9);
         glBegin(GL_POLYGON);
                 glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 1.0, 0.0);
                 glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
@@ -601,11 +601,10 @@ void drawGlideSlopeBall(float position){
         // Push
         glPushMatrix();
         glColor3f(127.0, 0.0, 255.0);
-
         // Push
         glPushMatrix();
         // This controls translation: 1st arg +right, 2nd arg +up, 3rd arg +closer
-        glTranslatef(0.258, 0.15, 4.0);
+        glTranslatef(0.259, 0.08 + (0.067 * destination.glideSlope), 4.0);
         // Setup texture binding between the references.
         // Create the sphere with the texture and longitude & lat. divisions,
         gluSphere(planeBall, .01, 10, 10);
@@ -623,51 +622,44 @@ void drawLocalizerBox(float position){
         glBegin(GL_POLYGON);
         glColor3f(127.0, 0.0, 255.0);
         if( (destination.localizerScale <= -1.5)&&(destination.localizerScale >= -2.0) ){
-            // grab coordinates of leftest
-            glVertex3f(-0.08, -0.14, 0.0); // #1
-            glVertex3f(-0.07, -0.14, 0.0); // #2
-            glVertex3f(-0.07, -0.13, 0.0); // #3
-            glVertex3f(-0.081, -0.13, 0.0);
+		// grab coordinates of leftest
+            	glVertex3f(-0.08, -0.14, 0.0); // #1
+	        glVertex3f(-0.07, -0.14, 0.0); // #2
+	        glVertex3f(-0.07, -0.13, 0.0); // #3
+        	glVertex3f(-0.081, -0.13, 0.0);
+        } else if((destination.localizerScale <= -0.5)&&(destination.localizerScale >-1.5)){
+            	// grab second to left most
+            	glVertex3f(-0.04, -0.14, 0.0); // #1
+            	glVertex3f(-0.03, -0.14, 0.0); // #2
+            	glVertex3f(-0.03, -0.13, 0.0); // #3
+            	glVertex3f(-0.04, -0.13, 0.0);
+        } else if((destination.localizerScale <= 1.5)&&(destination.localizerScale >= 0.5)){
+          	// grab second to right
+          	glVertex3f(0.1-0.05, -0.14, 0.0); // #1
+          	glVertex3f(0.09-0.05, -0.14, 0.0); // #2
+          	glVertex3f(0.09-0.05, -0.13, 0.0); // #3
+          	glVertex3f(0.1-0.05, -0.13, 0.0);
+        } else if((destination.localizerScale <= 2)&&(destination.localizerScale > 1.5)){
+          	// grab rightmost
+          	//glVertex3f ( x , y , z)
+           	glVertex3f(0.09, -0.14, 0.0); // #1
+	        glVertex3f(0.08, -0.14, 0.0); // #2
+           	glVertex3f(0.08, -0.13, 0.0); // #3
+           	glVertex3f(0.09, -0.13, 0.0);
+        } else{
+          	// put in center
+          	glVertex3f(0.01, -0.14, 0.0); // #1
+          	glVertex3f(0.00, -0.14, 0.0); // #2
+          	glVertex3f(0.00, -0.13, 0.0); // #3
+          	glVertex3f(0.01, -0.13, 0.0);
         }
-        else if((destination.localizerScale <= -0.5)&&(destination.localizerScale >-1.5)){
-            // grab second to left most
-            glVertex3f(-0.04, -0.14, 0.0); // #1
-            glVertex3f(-0.03, -0.14, 0.0); // #2
-            glVertex3f(-0.03, -0.13, 0.0); // #3
-            glVertex3f(-0.04, -0.13, 0.0);
-        }
-        else if((destination.localizerScale <= 1.5)&&(destination.localizerScale >= 0.5)){
-          // grab second to right
-          glVertex3f(0.1-0.05, -0.14, 0.0); // #1
-          glVertex3f(0.09-0.05, -0.14, 0.0); // #2
-          glVertex3f(0.09-0.05, -0.13, 0.0); // #3
-          glVertex3f(0.1-0.05, -0.13, 0.0);
-        }
-        else if((destination.localizerScale <= 2)&&(destination.localizerScale > 1.5)){
-          // grab rightmost
-          //glVertex3f ( x , y , z)
-           glVertex3f(0.09, -0.14, 0.0); // #1
-           glVertex3f(0.08, -0.14, 0.0); // #2
-           glVertex3f(0.08, -0.13, 0.0); // #3
-           glVertex3f(0.09, -0.13, 0.0);
-        }
-        else{
-          // put in center
-          glVertex3f(0.01, -0.14, 0.0); // #1
-          glVertex3f(0.00, -0.14, 0.0); // #2
-          glVertex3f(0.00, -0.13, 0.0); // #3
-          glVertex3f(0.01, -0.13, 0.0);
-        }
-
-
-
         glEnd();
         glEnable(GL_LIGHTING);
         glPopMatrix();
+
 }
 
 void drawSlipBall(float position){
-
         // use GLU to create a quadric surface reference
         GLUquadricObj* planeBall = gluNewQuadric();
         // Specificy the surface normals.
@@ -678,7 +670,7 @@ void drawSlipBall(float position){
         // Push
         glPushMatrix();
         // This controls translation: 1st arg +right, 2nd arg +up, 3rd arg +closer
-        glTranslatef(0.0, 1.60, 2.0);
+        glTranslatef(0.0 + (0.13333 * destination.slipSkid), 1.60, 2.0);
         // Setup texture binding between the references.
         // Create the sphere with the texture and longitude & lat. divisions,
         gluSphere(planeBall, .05, 10, 10);
@@ -694,7 +686,6 @@ void drawLocalizerScale(float position){
 	glLineWidth(2.0);
         glDisable(GL_LIGHTING);
         glColor3f(0.0, 1.0, 0.0);
-
 
         // far right
         glBegin(GL_LINES);

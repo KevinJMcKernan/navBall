@@ -4,6 +4,7 @@
 //=============================================================================
 //=  Notes:                                                                   =
 //=    1) This program conditionally compiles for Winsock and BSD sockets.    =
+
 //=       Set the initial #define to WIN or BSD as appropriate.               =
 //=    2) This program needs tcpServer to be running on another host.         =
 //=       Program tcpServer must be started first.                            =
@@ -154,49 +155,44 @@ void updateLighting() {
 	// Enable lighting.
 	glEnable(GL_LIGHT0);
 }
+
 int flightDataPtr; // pointer to flight data (destination)
+
 void receiveFlightData (void){
-
-//  for ( int t =0 ; t < 7 ; t++){
 	retcode = recv(client_s, in_buf, sizeof(in_buf), 0);
-		if(retcode < 0)
-		{
-			printf("*** ERROR - recv() failed \n");
-			exit(-1);
-		}
-
-    float i = 0;
-    std::vector<float> vect;
-    std::stringstream ss(in_buf_ptr);
-
-    while (ss >> i)
-    {
-      vect.push_back(i);
-
-      if (ss.peek() == ','){
-        ss.ignore();
-      }
-    }
-
-
-      destination.pitch 			= vect[0];
-      destination.roll				= vect[1];
-      destination.airspeed			= vect[2];
-      destination.heading			= vect[3];
-      destination.slipSkid			= vect[4];
-      destination.localizerScale	= vect[5];
-      destination.glideSlope		= vect[6];
-      destination.altitude			= int(vect[7]);
-
-printf( " pitch = %f roll = %f \n",destination.pitch, destination.roll);
-    retcode = send(client_s, in_buf, (strlen(in_buf) + 1), 0);
-		if(retcode < 0)
-		{
-			printf("*** ERROR - send() failed \n");
-			exit(-1);
-		}
-    printf("AfterPrint\n");
+	if(retcode < 0)	{
+		printf("*** ERROR - recv() failed \n");
+		exit(-1);
 	}
+
+	float i = 0;
+	std::vector<float> vect;
+	std::stringstream ss(in_buf_ptr);
+
+	while (ss >> i) {
+       		vect.push_back(i);
+		if (ss.peek() == ','){
+        		ss.ignore();
+	        }
+    	}
+
+	destination.pitch 		= vect[0];
+        destination.roll		= vect[1];
+        destination.airspeed		= vect[2];
+        destination.heading		= vect[3];
+        destination.slipSkid		= vect[4];
+        destination.localizerScale	= vect[5];
+        destination.glideSlope		= vect[6];
+        destination.altitude		= int(vect[7]);
+
+	printf("Pitch = %f Roll = %f \n",destination.pitch, destination.roll);
+    	retcode = send(client_s, in_buf, (strlen(in_buf) + 1), 0);
+	if(retcode < 0) {
+		printf("*** ERROR - send() failed \n");
+		exit(-1);
+	}
+    	printf("After Print\n");
+}
 
 // get the struct data from server and populate struct
 
@@ -209,7 +205,7 @@ void getDataFillStruct( void  ){// set globaly: struct flightData position
 	if( position.pitch < destination.pitch ){
 		glRotatef(1,1,0, 0);
 
-    position.pitch += 1;
+	position.pitch += 1;
 	}
 	if(position.pitch > destination.pitch ){
 		glRotatef(-1,1,0, 0);
@@ -223,7 +219,7 @@ void getDataFillStruct( void  ){// set globaly: struct flightData position
 		glRotatef(-1,0,1, 0);
 		position.roll -= 1;
 	}
-return;
+	return;
 }
 
 // Draw the navball
@@ -275,10 +271,8 @@ void drawAltitudeStrip(GLuint altitudeTexture){
         glPushMatrix();
         // Enable 2D textures.
         glBindTexture(GL_TEXTURE_2D, altitudeTexture);
-	// Second arguement is up
-	// first arguement is left/right
-	// 2, -5, 4
-	glTranslatef(.95, -3.0 + (-moveAltitudeUpTest), 2.0);
+	// Positioning.
+	glTranslatef(.95, -0.21 - (0.00068 * destination.altitude), 2.0);
 	// Create polygon object that has bound texture.
 	glBegin(GL_POLYGON);
 	    glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
@@ -303,7 +297,8 @@ void drawAirSpeedStrip(GLuint airSpeedTexture){
         // Second arguement is up
         // first arguement is left/right
         // 2, -5, 4
-        glTranslatef(-2.0, -3.0 + (-moveAirStripUpTest), 2.0);
+	// Finding zero position.
+        glTranslatef(-2.0, -3.1, 2.0);
         glBegin(GL_POLYGON);
                 glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
                 glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
@@ -339,6 +334,21 @@ void drawCompass(GLuint compassTexture) {
         glDisable(GL_TEXTURE_2D);
 }
 
+// Draw a compass cover for bottom right corner.
+void drawCompassCover(void){
+	glDisable(GL_LIGHTING);
+	glTranslatef(1.03, -2.14, 1.95);
+	glBegin(GL_POLYGON);
+		glColor3f(0.0, 0.0, 0.0);
+		glVertex3f(0.0, 0.0, 0.0);
+		glVertex3f(1.0, 0.0, 0.0);
+		glVertex3f(1.0, 1.0, 0.0);
+		glVertex3f(0.0, 1.0, 0.0);
+	glEnd();
+	glEnable(GL_LIGHTING);
+
+}
+
 // Draw airplane  Left Wing
 void drawAirplaneLeftWing(void){
 	glPushMatrix();
@@ -360,8 +370,9 @@ void drawAirplaneRightWing(void){
         glPushMatrix();
         glTranslatef(.186, 0.30, 2.0);
 	glDisable(GL_LIGHTING);
-        glBegin(GL_POLYGON);
 		glColor3f(0.0, 0.0, 0.0);
+
+        glBegin(GL_POLYGON);
                 glVertex3f(0.0, 0.05, 0.0); // #1
                 glVertex3f(0.0, 0.0, 0.0); // #2
                 glVertex3f(0.4, 0.0, 0.0); // #3
@@ -506,8 +517,6 @@ void drawGlideSlopeBox(void){
                glVertex3f(0.135, 0.12, 4.5);
         glEnd();
 
-
-
         // tiny box 2
         glBegin(GL_LINES);
                glVertex3f(0.125, 0.08, 4.5);
@@ -613,7 +622,6 @@ void drawLocalizerBox(float position){
         glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
         glColor3f(127.0, 0.0, 255.0);
-// if
         if( (destination.localizerScale <= -1.5)&&(destination.localizerScale >= -2.0) ){
             // grab coordinates of leftest
             glVertex3f(-0.08, -0.14, 0.0); // #1
@@ -973,9 +981,9 @@ void makeAllImages() {
 // Display FCN
 void display(void) {
 	
-  getDataFillStruct();
-  // Initialize lighting model
-  theta[0] =  destination.pitch-90;
+//	getDataFillStruct();
+	// Initialize lighting model
+	theta[0] =  destination.pitch-90;
 	gettimeofday(&tv1, NULL);
 	// Initialize lighting model
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LIGHT_MODEL_AMBIENT);
@@ -994,24 +1002,6 @@ void display(void) {
 	glMatrixMode(GL_MODELVIEW);
 	// Clean
 	glLoadIdentity();
-	// TODO move stuff to a initGL FCN.
-	//	For example a cleanStart FCN.
-
-	// Logic for rotating sphere in here.
-/*
-  theta[0] += 1.0;
-	if(theta[0] > 360.0) {
-		theta[0] = 0.0;
-	}
-	moveAltitudeUpTest += .001;
-	if(moveAltitudeUpTest > 4 ){
-		moveAltitudeUpTest = 0;
-	}
-	moveAirStripUpTest += .002;
-	if(moveAirStripUpTest > 4){
-		moveAirStripUpTest = 0;
-	}
-*/
 	// Push stuff back so we can see it 2 units.
 	// 3rd value was 10
 	glTranslatef(0.0f, 0.0f, -5.0f);
@@ -1026,7 +1016,6 @@ void display(void) {
 	drawCompass(compassTexture);
 	drawAirplaneRightWing();
 	drawAirplaneLeftWing();
-//	drawAirplaneTinyBall();
 	drawSlipBall(0);
 	drawAltitudeBox();
 	drawAltitudeText(destination.altitude);
@@ -1040,7 +1029,7 @@ void display(void) {
 	drawRoll();
 	drawDecorators();
 	drawCompassNeedle();
-//	drawCompassBox(1.0);
+	drawCompassCover();
 	//drawAltStrip(altitudeTexture);
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
@@ -1048,7 +1037,6 @@ void display(void) {
 	// SHOW ME WHAT YOU GOT.
 	// Reference:
 	glFlush(); // Flush the OpenGL buffers to the window
-//printf(" void display(void)-> eof\n");
 	gettimeofday(&tv2, NULL);
 	printf("Time to render image, once data recieved is: %ld microseconds\n", tv2.tv_usec-tv1.tv_usec);
 }
@@ -1075,53 +1063,45 @@ void reshape(int width, int height) {
 // We use GLU library to make complex tasks easier.
 // We use openGL aka "gl" to do 'stuff'.
 int main(int argc, char **argv) {
-	#ifdef WIN
-	  WORD wVersionRequested = MAKEWORD(1,1);       // Stuff for WSA functions
-	  WSADATA wsaData;                              // Stuff for WSA functions
+/*	#ifdef WIN
+		WORD wVersionRequested = MAKEWORD(1,1);       // Stuff for WSA functions
+	 	WSADATA wsaData;                              // Stuff for WSA functions
 	#endif
-	 /* int                  client_s;        // Client socket descriptor
-	  struct sockaddr_in   server_addr;     // Server Internet address
-	  char                 out_buf[4096];   // Output buffer for data
-	  char                 in_buf[4096];    // Input buffer for data
-	  int                  retcode;         // Return code */  // trying global
 
 	#ifdef WIN
-	  // This stuff initializes winsock
-	  WSAStartup(wVersionRequested, &wsaData);
+	   	// This stuff initializes winsock
+	  	WSAStartup(wVersionRequested, &wsaData);
 	#endif
-	// >>> Step #1 <<<
-	  // Christensen's tools page
-	  // Create a client socket
-	  //   - AF_INET is Address Family Internet and SOCK_STREAM is streams
-	  client_s = socket(AF_INET, SOCK_STREAM, 0);
-	  if(client_s < 0)
-	  {
+        // >>> Step #1 <<<
+	// Christensen's tools page
+	// Create a client socket
+	//   - AF_INET is Address Family Internet and SOCK_STREAM is streams
+	client_s = socket(AF_INET, SOCK_STREAM, 0);
+	if(client_s < 0) {
 	    printf("*** ERROR - socket() failed \n");
 	    exit(-1);
-	  }
+	}
 
 
-	  // >>> Step #2 <<<
-	  // Fill-in the server's address information and do a connect with the
-	  // listening server using the client socket - the connect() will block.
-	  server_addr.sin_family = AF_INET;                 // Address family to use
-	  server_addr.sin_port = htons(PORT_NUM);           // Port num to use
-	  server_addr.sin_addr.s_addr = inet_addr(IP_ADDR); // IP address to use
-	  retcode = connect(client_s, (struct sockaddr *)&server_addr,
-	    sizeof(server_addr));
-	  if(retcode < 0)
-	  {
-	    printf("*** ERROR - connect() failed \n");
-	    exit(-1);
-	  }
+	// >>> Step #2 <<<
+	// Fill-in the server's address information and do a connect with the
+	// listening server using the client socket - the connect() will block.
+	server_addr.sin_family = AF_INET;                 // Address family to use
+	server_addr.sin_port = htons(PORT_NUM);           // Port num to use
+	server_addr.sin_addr.s_addr = inet_addr(IP_ADDR); // IP address to use
+	retcode = connect(client_s, (struct sockaddr *)&server_addr,
+	sizeof(server_addr));
+	if(retcode < 0) {
+		printf("*** ERROR - connect() failed \n");
+		exit(-1);
+	}
 
 	///////////// end start client////////////
 
 	// >>> Step #3 <<<
 	// Receive from the server using the client socket
 	retcode = recv(client_s, in_buf, sizeof(in_buf), 0);
-	if(retcode < 0)
-	{
+	if(retcode < 0) {
 		printf("*** ERROR - recv() failed \n");
 		exit(-1);
 	}
@@ -1129,15 +1109,15 @@ int main(int argc, char **argv) {
 	// Output the received message
 	printf("Received from server: %s \n", in_buf);
 
-	// >>> Step #4 <<<
+        // >>> Step #4 <<<
 	// Send to the server using the client socket
 	strcpy(out_buf, "Client is connected to server... Waiting for packets");
 	retcode = send(client_s, out_buf, (strlen(out_buf) + 1), 0);
-	if (retcode < 0)
-	{
+	if (retcode < 0) {
 		printf("*** ERROR - send() failed \n");
 		exit(-1);
-	}
+	} 
+*/ 
 	printf("Hello, world!\n");
 
 	// Define our window size and the are to draw too.
@@ -1197,8 +1177,8 @@ int main(int argc, char **argv) {
 	glutMainLoop();
 
 
-
-////////////////////// Close connection ///////////////////////
+/*
+	////////////////////// Close connection ///////////////////////
 	#ifdef WIN
 	  retcode = closesocket(client_s);
 	  if (retcode < 0)
@@ -1220,6 +1200,6 @@ int main(int argc, char **argv) {
 	  // Clean-up winsock
 	  WSACleanup();
 	#endif
-
+	*/
 	return 0;
 }

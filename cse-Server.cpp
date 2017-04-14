@@ -277,8 +277,8 @@ if (retcode < 0)
 	data1.roll						=0.0;
 	data1.airspeed				=0.0;
 	data1.heading 				=0.0;
-	data1.slipSkid 				=0.0;
-	data1.localizerScale  =0.0;
+	data1.slipSkid 				=-2.0;
+	data1.localizerScale  =-2.0;
 	data1.glideSlope 			=0.0;
 	data1.altitude 				= 0;
 
@@ -286,7 +286,7 @@ if (retcode < 0)
 		sendFlightData(data1, retcode, connect_s);
 			data1.pitch+=5;
       data1.roll+=5;
-			//data1.airspeed++;
+			data1.localizerScale+=0.1;
       usleep(100);
       int x ;
       cin >> x;

@@ -1,41 +1,10 @@
 // Main Sources:
-//==================================================== file = tcpClient.c =====
-//=  A message "client" program to demonstrate sockets programming            =
-//=============================================================================
-//=  Notes:                                                                   =
-//=    1) This program conditionally compiles for Winsock and BSD sockets.    =
-
-//=       Set the initial #define to WIN or BSD as appropriate.               =
-//=    2) This program needs tcpServer to be running on another host.         =
-//=       Program tcpServer must be started first.                            =
-//=    3) This program assumes that the IP address of the host running        =
-//=       tcpServer is defined in "#define IP_ADDR"                           =
-//=    4) The steps #'s correspond to lecture topics.                         =
-//=---------------------------------------------------------------------------=
-//=  Example execution: (tcpServer and tcpClient running on host 127.0.0.1)   =
-//=    Received from server: This is a message from SERVER to CLIENT          =
-//=---------------------------------------------------------------------------=
-//=  Build: bcc32 tcpClient.c or cl tcpClient.c wsock32.lib for Winsock       =
-//=         gcc tcpClient.c -lnsl for BSD                                     =
-//=---------------------------------------------------------------------------=
-//=  Execute: tcpClient                                                       =
-//=---------------------------------------------------------------------------=
-//=  Author: Ken Christensen                                                  =
-//=          University of South Florida                                      =
-//=          WWW: http://www.csee.usf.edu/~christen                           =
-//=          Email: christen@csee.usf.edu                                     =
-//=---------------------------------------------------------------------------=
-//=  History:  KJC (08/02/08) - Genesis (from client.c)                       =
-//=            KJC (09/09/09) - Minor clean-up                                =
-//=            KJC (09/22/13) - Minor clean-up to fix warnings                =
-//=============================================================================
-
+// Dr. Christensen's TCP Client/Server Example
 // www.khronos.org/registry/OpenGL-Refpages
 // F.S.Hill Jr. "Computer Graphics Using OpenGL"
 // www.glprogramming.com/red/about.html
 
 // Compile and link with gcc navDisplay.c -o t1 -lGL -lGLU -lglut
-
 #include <assert.h>
 #include <math.h>
 #include <iostream>
@@ -43,17 +12,15 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
-#include <GL/freeglut.h>  // Include the GLUT header file
+#include <GL/freeglut.h>
 #include "RGBpixmap.h"
 #include <time.h>
 #include <sys/time.h>
 #include <sstream>
-//#include <binn.h>
 #include <unistd.h>
 #include "SOIL.h"
 
-
-// Christensen's tools page
+// Sockets example from Christensen's tool page.
 #define  BSD                // WIN for Winsock and BSD for BSD sockets
 //----- Include files ---------------------------------------------------------
 #include <stdio.h>          // Needed for printf()
@@ -77,7 +44,8 @@
 #define  IP_ADDR    "127.0.0.1"  // IP address of server (*** HARDWIRED ***)
 #define  radius  110
 #define PI 3.1459265
-// Graphics Library Unsigned Binary Integer
+
+// Graphics Library Unsigned Binary Integers
 GLuint navBallTexture = 1;
 GLuint airSpeedTexture = 2;
 GLuint altitudeTexture = 3;
@@ -90,9 +58,8 @@ struct flightData{
 
 struct flightData position;
 struct flightData destination;
-// BMP image file. You can make one in MS paint.
+// PNG. You can make one in MS paint.
 const char navBallFileName[] = "imageTextures/newBall.png";
-
 const char airSFileName[] = "imageTextures/t6s.png";
 const char altitudeFileName[] = "imageTextures/t6a.png";
 const char compassFileName[] =  "imageTextures/compassFinal.png";
@@ -101,16 +68,12 @@ const char compassFileName[] =  "imageTextures/compassFinal.png";
 GLfloat moveAirStripUpTest = 3;
 GLfloat moveAltitudeUpTest = 0;
 
-// TODO: Create permanant movement values.
-
 // Constants for our lighting and image. Edit these to change
 // Lighting.
 // Resource: www.glprogramming.com/red/chapter05.html
 // See example 5.2
 
 // This specifies light position.
-
-// First value raises light.
 const GLfloat LIGHT_0_POSITION[] = {1.0, 0.0, 1.0, 0.0}; 	// Light Position.
 // Ambient light is the light already present in the scene.
 const GLfloat LIGHT_AMBIENT[] = {1.0, 1.0, 1.0, 1.0};		// RGBA ambient lighting. was .8 x 3
@@ -342,8 +305,8 @@ void drawCompassCover(void){
 		glColor3f(0.0, 0.0, 0.0);
 		glVertex3f(0.0, 0.0, 0.0);
 		glVertex3f(1.0, 0.0, 0.0);
-		glVertex3f(1.0, 1.0, 0.0);
-		glVertex3f(0.0, 1.0, 0.0);
+		glVertex3f(1.0, 2.0, 0.0);
+		glVertex3f(0.0, 2.0, 0.0);
 	glEnd();
 	glEnable(GL_LIGHTING);
 
@@ -413,6 +376,7 @@ void drawAltitudeText(int altitude){
 	glColor3f(0.0, 0.0, 0.0);
 	glRasterPos3f(0.398, 0.07, 4.0);
 	for(int i = 0; i < str.length(); i++){
+		// GLUT_BITMAP_TIMES_ROMAN_24
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[i]);
 	}
 	glEnable(GL_LIGHTING);
@@ -855,7 +819,7 @@ void drawRoll(void){
 
 
 void drawDecorators(void){
-	glLineWidth(4.0);
+	glLineWidth(8.0);
 	glDisable(GL_LIGHTING);
 	glColor3f(0.6, 0.6, 0.6);
         // Left Line
@@ -874,7 +838,7 @@ void drawDecorators(void){
 		glVertex3f(0.165, -0.185, 4.5);
 	glEnd();
 	// Box Box
-	glLineWidth(2.0);
+	glLineWidth(4.0);
         glBegin(GL_LINES); // Top Side
                 glVertex3f(-0.175, 0.07, 4.5);
                 glVertex3f(-0.3, 0.07, 4.5);
@@ -885,12 +849,12 @@ void drawDecorators(void){
         glEnd();
 	// Box Box
 	glBegin(GL_LINES);
-		glVertex3f(0.17, 0.07, 4.5);
-		glVertex3f(0.3, 0.07, 4.5);
+		glVertex3f(0.17-0.005, 0.07, 4.5);
+		glVertex3f(0.3-0.005, 0.07, 4.5);
 	glEnd();
 	glBegin(GL_LINES);
-		glVertex3f(0.17, 0.008, 4.5);
-		glVertex3f(0.3, 0.008, 4.5);
+		glVertex3f(0.17-0.005, 0.008, 4.5);
+		glVertex3f(0.3-0.005, 0.008, 4.5);
 	glEnd();
 	
 	glEnable(GL_LIGHTING);
@@ -972,7 +936,7 @@ void makeAllImages() {
 // Display FCN
 void display(void) {
 	
-//	getDataFillStruct();
+	getDataFillStruct();
 	// Initialize lighting model
 	theta[0] =  destination.pitch-90;
 	gettimeofday(&tv1, NULL);
@@ -1054,7 +1018,7 @@ void reshape(int width, int height) {
 // We use GLU library to make complex tasks easier.
 // We use openGL aka "gl" to do 'stuff'.
 int main(int argc, char **argv) {
-/*	#ifdef WIN
+	#ifdef WIN
 		WORD wVersionRequested = MAKEWORD(1,1);       // Stuff for WSA functions
 	 	WSADATA wsaData;                              // Stuff for WSA functions
 	#endif
@@ -1108,19 +1072,20 @@ int main(int argc, char **argv) {
 		printf("*** ERROR - send() failed \n");
 		exit(-1);
 	} 
-*/ 
+ 
 	printf("Hello, world!\n");
 
 	// Define our window size and the are to draw too.
-	glutInitWindowSize(500, 500);
-	glViewport(0,0, 500, 500);
+	glutInitWindowSize(800, 400);
+	glViewport(0,0, 800, 400);
 
 	// Set the initial display position in pixels.
-	glutInitWindowPosition(100, 100);	// X and Y Location
+	glutInitWindowPosition(0, 0);	// X and Y Location
 
 	// Initiatize the GLUT library, and negotiate a session,
 	//	with the window system.
 	glutInit(&argc, argv);
+
 
 	// Initial Display Mode: determines the display mode,
 	//	for the to-be-created window.
@@ -1131,6 +1096,7 @@ int main(int argc, char **argv) {
 	// Check: glutFULLScreen.
 	// Creates a top-level window. Name: Navball
 	glutCreateWindow("NavBall");
+	glutFullScreen();
 
 	// Our Display Function
 	glutDisplayFunc(display);	// FCN: display up above.;
@@ -1168,7 +1134,7 @@ int main(int argc, char **argv) {
 	glutMainLoop();
 
 
-/*
+
 	////////////////////// Close connection ///////////////////////
 	#ifdef WIN
 	  retcode = closesocket(client_s);
@@ -1191,6 +1157,6 @@ int main(int argc, char **argv) {
 	  // Clean-up winsock
 	  WSACleanup();
 	#endif
-	*/
+	
 	return 0;
 }

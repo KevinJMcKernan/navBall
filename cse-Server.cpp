@@ -270,26 +270,100 @@ if (retcode < 0)
 	//}
 
 	//return 0;
-
+	string x;
 	struct flightData data1;
 
 	data1.pitch						=0.0;
 	data1.roll						=0.0;
 	data1.airspeed				=0.0;
 	data1.heading 				=0.0;
-	data1.slipSkid 				=-2.0;
-	data1.localizerScale  =-2.0;
-	data1.glideSlope 			=0.0;
+	data1.slipSkid 				=0.0;
+	data1.localizerScale  =0.0;
+	data1.glideSlope 			=-2.0;
 	data1.altitude 				= 0;
-
-	for(int i = 0; i < 100; i++){
+	sendFlightData(data1, retcode, connect_s);
+/*
+	printf("Pitch Test: Press Enter to contine.\n");
+	cin >> x;
+	//pitch test
+	for(int i = 0; i < 720; i++){
 		sendFlightData(data1, retcode, connect_s);
-			data1.pitch+=5;
-      data1.roll+=5;
-			data1.localizerScale+=0.1;
+			if (i < 360)
+				data1.pitch+=0.5;
+			else
+				data1.pitch-=0.5;
+      //usleep(1);
+}
+	printf("Roll Test: Press Enter to contine.\n");
+	cin >> x;
+	//roll test
+	for(int i = 0; i < 720; i++){
+		sendFlightData(data1, retcode, connect_s);
+			if (i < 360)
+				data1.roll+=0.5;
+			else
+				data1.roll-=0.5;
       usleep(100);
-      int x ;
-      cin >> x;
+}
+	printf("Airspeed Test: Press Enter to contine.\n");
+	cin >> x;
+	//airspeed test
+	for(int i = 0; i < 800; i++){
+		sendFlightData(data1, retcode, connect_s);
+			if (i < 400)
+				data1.airspeed+=1;
+			else
+				data1.airspeed-=1;
+      usleep(1000);
+}
+	printf("Heading Test: Press Enter to contine.\n");
+	cin >> x;
+	//heading test
+	for(int i = 0; i < 360; i++){
+		sendFlightData(data1, retcode, connect_s);
+			data1.heading+=1;
+      usleep(1000);
+}*/
+	printf("Slipball Test: Press Enter to contine.\n");
+	cin >> x;
+	//slipSkid test
+	for(int i = 0; i < 60; i++){
+    sendFlightData(data1, retcode, connect_s);
+			if (i < 20)
+				data1.slipSkid+=0.1;
+			else
+				data1.slipSkid-=0.1;
+      usleep(250000);
+}
+	printf("LocalizerScale Test: Press Enter to contine.\n");
+	cin >> x;
+	//localizerScale test
+	for(int i = 0; i < 40; i++){
+    sendFlightData(data1, retcode, connect_s);
+			if (i < 20)
+				data1.localizerScale+=0.1;
+			else
+				data1.localizerScale-=0.1;
+      usleep(250000);
+}
+	printf("GlideSlope Test: Press Enter to contine.\n");
+	cin >> x;
+	//glideSlope test
+	for(int i = 0; i < 40; i++){
+    sendFlightData(data1, retcode, connect_s);
+			if (i < 20)
+				data1.glideSlope+=0.1;
+			else
+				data1.glideSlope-=0.1;
+      usleep(250000);
+}
+	printf("Altitude Test: Press Enter to contine.\n");
+	cin >> x;
+	//altitude test
+	for(int i = 0; i < 2000; i++){
+		sendFlightData(data1, retcode, connect_s);
+			data1.altitude+=10;
+      usleep(1000);
 }
 //*********************end Send all data for the client************
 //********************close server*********************************

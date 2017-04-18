@@ -41,7 +41,8 @@
 
 //----- Defines ---------------------------------------------------------------
 #define  PORT_NUM         1052   // Port number used at the server
-#define  IP_ADDR    "10.0.0.141"  // IP address of server (*** HARDWIRED ***)
+// Remote was 127.0.0.141
+#define  IP_ADDR    "127.0.0.1"  // IP address of server (*** HARDWIRED ***)
 #define  radius  110
 #define PI 3.1459265
 
@@ -216,6 +217,7 @@ void drawNavBall(GLuint navBallTexture, GLfloat navBallRadius){
 	// Setup texture binding between the references.
         glBindTexture(GL_TEXTURE_2D, navBallTexture);
 	// Create the sphere with the texture and longitude & lat. divisions,
+	
         gluSphere(ball, navBallRadius, 48, 48);
 	// Pop x2
         glPopMatrix();
@@ -909,8 +911,7 @@ void makeAllImages() {
 //GLfloat theta[] = {(-90.0+destination.pitch), 0.0, 0.0};	// Used in our display function.
 // Display FCN
 void display(void) {
-	
-//	getDataFillStruct();
+	getDataFillStruct();
 	// Initialize lighting model
 	theta[0] =  destination.pitch-90;
 	gettimeofday(&tv1, NULL);
@@ -992,7 +993,7 @@ void reshape(int width, int height) {
 // We use GLU library to make complex tasks easier.
 // We use openGL aka "gl" to do 'stuff'.
 int main(int argc, char **argv) {
-/*	#ifdef WIN
+	#ifdef WIN
 		WORD wVersionRequested = MAKEWORD(1,1);       // Stuff for WSA functions
 	 	WSADATA wsaData;                              // Stuff for WSA functions
 	#endif
@@ -1046,12 +1047,12 @@ int main(int argc, char **argv) {
 		printf("*** ERROR - send() failed \n");
 		exit(-1);
 	} 
- */
+
 	printf("Hello, world!\n");
 
 	// Define our window size and the are to draw too.
-	glutInitWindowSize(800, 400);
-	glViewport(0,0, 800, 400);
+	glutInitWindowSize(400, 400);
+	glViewport(0,0, 400, 400);
 
 	// Set the initial display position in pixels.
 	glutInitWindowPosition(0, 0);	// X and Y Location
@@ -1070,7 +1071,7 @@ int main(int argc, char **argv) {
 	// Check: glutFULLScreen.
 	// Creates a top-level window. Name: Navball
 	glutCreateWindow("NavBall");
-	glutFullScreen();
+//	glutFullScreen();
 
 	// Our Display Function
 	glutDisplayFunc(display);	// FCN: display up above.;
@@ -1109,7 +1110,7 @@ int main(int argc, char **argv) {
 
 
 
-/*	////////////////////// Close connection ///////////////////////
+	////////////////////// Close connection ///////////////////////
 	#ifdef WIN
 	  retcode = closesocket(client_s);
 	  if (retcode < 0)
@@ -1131,6 +1132,6 @@ int main(int argc, char **argv) {
 	  // Clean-up winsock
 	  WSACleanup();
 	#endif
-*/	
+
 	return 0;
 }

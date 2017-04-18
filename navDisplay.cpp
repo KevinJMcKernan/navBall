@@ -41,7 +41,7 @@
 
 //----- Defines ---------------------------------------------------------------
 #define  PORT_NUM         1052   // Port number used at the server
-#define  IP_ADDR    "127.0.0.1"  // IP address of server (*** HARDWIRED ***)
+#define  IP_ADDR    "10.0.0.141"  // IP address of server (*** HARDWIRED ***)
 #define  radius  110
 #define PI 3.1459265
 
@@ -60,7 +60,7 @@ struct flightData position;
 struct flightData destination;
 // PNG. You can make one in MS paint.
 const char navBallFileName[] = "imageTextures/newBall.png";
-const char airSFileName[] = "imageTextures/t6s.png";
+const char airSFileName[] = "imageTextures/t8.png";
 const char altitudeFileName[] = "imageTextures/t6a.png";
 const char compassFileName[] =  "imageTextures/compassFinal.png";
 
@@ -261,12 +261,12 @@ void drawAirSpeedStrip(GLuint airSpeedTexture){
         // first arguement is left/right
         // 2, -5, 4
 	// Finding zero position.
-        glTranslatef(-2.0, -2.5 - (.0455 * destination.airspeed), 2.0);
+        glTranslatef(-2.0, -2.95 - (.0716 * destination.airspeed), 2.0);
         glBegin(GL_POLYGON);
-                glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 16.0, 0.0);
+                glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 32.0, 0.0);
                 glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
                 glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0, 0.0, 0.0);
-                glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 16.0, 0.0);
+                glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 32.0, 0.0);
         glEnd();
         glPopMatrix();
         glPopMatrix();
@@ -285,7 +285,7 @@ void drawCompass(GLuint compassTexture) {
         // Second arguement is up
         // first arguement is left/right
         // 2, -5, 4
-        glTranslatef(-1.5 +(.0335 * destination.heading), -2.15, 1.9);
+        glTranslatef(-1.5 +(-.0335 * destination.heading), -2.15, 1.9);
         glBegin(GL_POLYGON);
                 glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 1.0, 0.0);
                 glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);
@@ -936,7 +936,7 @@ void makeAllImages() {
 // Display FCN
 void display(void) {
 	
-	getDataFillStruct();
+//	getDataFillStruct();
 	// Initialize lighting model
 	theta[0] =  destination.pitch-90;
 	gettimeofday(&tv1, NULL);
@@ -1018,7 +1018,7 @@ void reshape(int width, int height) {
 // We use GLU library to make complex tasks easier.
 // We use openGL aka "gl" to do 'stuff'.
 int main(int argc, char **argv) {
-	#ifdef WIN
+/*	#ifdef WIN
 		WORD wVersionRequested = MAKEWORD(1,1);       // Stuff for WSA functions
 	 	WSADATA wsaData;                              // Stuff for WSA functions
 	#endif
@@ -1072,7 +1072,7 @@ int main(int argc, char **argv) {
 		printf("*** ERROR - send() failed \n");
 		exit(-1);
 	} 
- 
+ */
 	printf("Hello, world!\n");
 
 	// Define our window size and the are to draw too.
@@ -1135,7 +1135,7 @@ int main(int argc, char **argv) {
 
 
 
-	////////////////////// Close connection ///////////////////////
+/*	////////////////////// Close connection ///////////////////////
 	#ifdef WIN
 	  retcode = closesocket(client_s);
 	  if (retcode < 0)
@@ -1157,6 +1157,6 @@ int main(int argc, char **argv) {
 	  // Clean-up winsock
 	  WSACleanup();
 	#endif
-	
+*/	
 	return 0;
 }

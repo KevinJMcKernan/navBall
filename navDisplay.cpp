@@ -581,42 +581,16 @@ void drawGlideSlopeBall(float position){
 
 void drawLocalizerBox(float position){
         glPushMatrix();
-        glTranslatef(0.0, 0.0, 4.5);
+        glTranslatef(0.0 + (destination.localizerScale * 0.0400), 0.0, 4.5);
         glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
+	float offset = .005;
         glColor3f(127.0, 0.0, 255.0);
-        if( (destination.localizerScale <= -1.5)&&(destination.localizerScale >= -2.0) ){
 		// grab coordinates of leftest
-            	glVertex3f(-0.08, -0.14, 0.0); // #1
-	        glVertex3f(-0.07, -0.14, 0.0); // #2
-	        glVertex3f(-0.07, -0.13, 0.0); // #3
-        	glVertex3f(-0.081, -0.13, 0.0);
-        } else if((destination.localizerScale <= -0.5)&&(destination.localizerScale >-1.5)){
-            	// grab second to left most
-            	glVertex3f(-0.04, -0.14, 0.0); // #1
-            	glVertex3f(-0.03, -0.14, 0.0); // #2
-            	glVertex3f(-0.03, -0.13, 0.0); // #3
-            	glVertex3f(-0.04, -0.13, 0.0);
-        } else if((destination.localizerScale <= 1.5)&&(destination.localizerScale >= 0.5)){
-          	// grab second to right
-          	glVertex3f(0.1-0.05, -0.14, 0.0); // #1
-          	glVertex3f(0.09-0.05, -0.14, 0.0); // #2
-          	glVertex3f(0.09-0.05, -0.13, 0.0); // #3
-          	glVertex3f(0.1-0.05, -0.13, 0.0);
-        } else if((destination.localizerScale <= 2)&&(destination.localizerScale > 1.5)){
-          	// grab rightmost
-          	//glVertex3f ( x , y , z)
-           	glVertex3f(0.09, -0.14, 0.0); // #1
-	        glVertex3f(0.08, -0.14, 0.0); // #2
-           	glVertex3f(0.08, -0.13, 0.0); // #3
-           	glVertex3f(0.09, -0.13, 0.0);
-        } else{
-          	// put in center
-          	glVertex3f(0.01, -0.14, 0.0); // #1
-          	glVertex3f(0.00, -0.14, 0.0); // #2
-          	glVertex3f(0.00, -0.13, 0.0); // #3
-          	glVertex3f(0.01, -0.13, 0.0);
-        }
+            	glVertex3f(-0.01 + offset, -0.14, 0.0); // #1
+	        glVertex3f(0.00 + offset, -0.14, 0.0); // #2
+	        glVertex3f(0.00 + offset, -0.13, 0.0); // #3
+        	glVertex3f(-0.01 + offset, -0.13, 0.0);
         glEnd();
         glEnable(GL_LIGHTING);
         glPopMatrix();
@@ -650,97 +624,97 @@ void drawLocalizerScale(float position){
 	glLineWidth(2.0);
         glDisable(GL_LIGHTING);
         glColor3f(0.0, 1.0, 0.0);
-
+	float offset = -0.005;
         // far right
         glBegin(GL_LINES);
-               glVertex3f(0.09, -0.14, 4.5);
-               glVertex3f(0.08, -0.14, 4.5);
+               glVertex3f(0.09 + offset, -0.14, 4.5);
+               glVertex3f(0.08 + offset, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.08, -0.14, 4.5);
-               glVertex3f(0.08, -0.13, 4.5);
+               glVertex3f(0.08 + offset, -0.14, 4.5);
+               glVertex3f(0.08 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.08, -0.13, 4.5);
-               glVertex3f(0.09, -0.13, 4.5);
+               glVertex3f(0.08 + offset, -0.13, 4.5);
+               glVertex3f(0.09 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.09, -0.13, 4.5);
-               glVertex3f(0.09, -0.14, 4.5);
+               glVertex3f(0.09 + offset, -0.13, 4.5);
+               glVertex3f(0.09 + offset, -0.14, 4.5);
         glEnd();
 
 
         // 2nd from middle on right
         glBegin(GL_LINES);
-               glVertex3f(0.05, -0.14, 4.5);
-               glVertex3f(0.04, -0.14, 4.5);
+               glVertex3f(0.05 + offset, -0.14, 4.5);
+               glVertex3f(0.04 + offset, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.04, -0.14, 4.5);
-               glVertex3f(0.04, -0.13, 4.5);
+               glVertex3f(0.04 + offset, -0.14, 4.5);
+               glVertex3f(0.04 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.04, -0.13, 4.5);
-               glVertex3f(0.05, -0.13, 4.5);
+               glVertex3f(0.04 + offset, -0.13, 4.5);
+               glVertex3f(0.05 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.05, -0.13, 4.5);
-               glVertex3f(0.05, -0.14, 4.5);
+               glVertex3f(0.05 + offset, -0.13, 4.5);
+               glVertex3f(0.05 + offset, -0.14, 4.5);
         glEnd();
 
         // middle box
         glBegin(GL_LINES);
-               glVertex3f(0.01, -0.14, 4.5);
-               glVertex3f(0.00, -0.14, 4.5);
+               glVertex3f(0.01 + offset, -0.14, 4.5);
+               glVertex3f(0.00 + offset, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.00, -0.14, 4.5);
-               glVertex3f(0.00, -0.13, 4.5);
+               glVertex3f(0.00 + offset, -0.14, 4.5);
+               glVertex3f(0.00 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.00, -0.13, 4.5);
-               glVertex3f(0.01, -0.13, 4.5);
+               glVertex3f(0.00 + offset, -0.13, 4.5);
+               glVertex3f(0.01 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(0.01, -0.13, 4.5);
-               glVertex3f(0.01, -0.14, 4.5);
+               glVertex3f(0.01 + offset, -0.13, 4.5);
+               glVertex3f(0.01 + offset, -0.14, 4.5);
         glEnd();
 
         // 2nd from middle box on left
         glBegin(GL_LINES);
-               glVertex3f(-0.04, -0.14, 4.5);
-               glVertex3f(-0.03, -0.14, 4.5);
+               glVertex3f(-0.04 + offset, -0.14, 4.5);
+               glVertex3f(-0.03 + offset, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.03, -0.14, 4.5);
-               glVertex3f(-0.03, -0.13, 4.5);
+               glVertex3f(-0.03 + offset, -0.14, 4.5);
+               glVertex3f(-0.03 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.03, -0.13, 4.5);
-               glVertex3f(-0.04, -0.13, 4.5);
+               glVertex3f(-0.03 + offset, -0.13, 4.5);
+               glVertex3f(-0.04 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.04, -0.13, 4.5);
-               glVertex3f(-0.04, -0.14, 4.5);
+               glVertex3f(-0.04 + offset, -0.13, 4.5);
+               glVertex3f(-0.04 + offset, -0.14, 4.5);
         glEnd();
 
 	// far left box
         // 2nd from middle box on left
         glBegin(GL_LINES);
-               glVertex3f(-0.08, -0.14, 4.5);
-               glVertex3f(-0.07, -0.14, 4.5);
+               glVertex3f(-0.08 + offset, -0.14, 4.5);
+               glVertex3f(-0.07 + offset, -0.14, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.07, -0.14, 4.5);
-               glVertex3f(-0.07, -0.13, 4.5);
+               glVertex3f(-0.07 + offset, -0.14, 4.5);
+               glVertex3f(-0.07 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.07, -0.13, 4.5);
-               glVertex3f(-0.08, -0.13, 4.5);
+               glVertex3f(-0.07 + offset, -0.13, 4.5);
+               glVertex3f(-0.08 + offset, -0.13, 4.5);
         glEnd();
         glBegin(GL_LINES);
-               glVertex3f(-0.08, -0.13, 4.5);
-               glVertex3f(-0.08, -0.14, 4.5);
+               glVertex3f(-0.08 + offset, -0.13, 4.5);
+               glVertex3f(-0.08 + offset, -0.14, 4.5);
         glEnd();
 }
 
@@ -779,7 +753,7 @@ void drawRoll(void){
 	double a = 0.0;		// Angle in degrees.
 	int i = 0;
 	// This draws the fine grain markers every 11.25 degrees.
-	for(i = 3; i < 14; i++){
+	for(i = 4; i < 14; i++){
 		// Outer Point
 		x = cx + r * cos(a); 	
 		y = cy + r * sin(a);

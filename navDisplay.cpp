@@ -315,7 +315,7 @@ void drawCompassCover(void){
 // Draw airplane  Left Wing
 void drawAirplaneLeftWing(void){
 	glPushMatrix();
-        glTranslatef(-0.55, 0.30, 2.0); // 1: left/right, 2: upDown
+        glTranslatef(-0.55, 0.275, 2.0); // 1: left/right, 2: upDown
 	glDisable(GL_LIGHTING);
         glBegin(GL_POLYGON);
 		glColor3f(0.0, 0.0, 0.0);
@@ -331,7 +331,7 @@ void drawAirplaneLeftWing(void){
 // Draw airplane right wing
 void drawAirplaneRightWing(void){
         glPushMatrix();
-        glTranslatef(.186, 0.30, 2.0);
+        glTranslatef(.15, 0.275, 2.0);
 	glDisable(GL_LIGHTING);
 		glColor3f(0.0, 0.0, 0.0);
 

@@ -217,7 +217,7 @@ void drawNavBall(GLuint navBallTexture, GLfloat navBallRadius){
 	// Setup texture binding between the references.
         glBindTexture(GL_TEXTURE_2D, navBallTexture);
 	// Create the sphere with the texture and longitude & lat. divisions,
-	
+
         gluSphere(ball, navBallRadius, 48, 48);
 	// Pop x2
         glPopMatrix();
@@ -417,7 +417,7 @@ void drawAirspeedBox(void){
 
 void drawAirspeedText(float airspeed){
         std:stringstream ss;
-        ss << airspeed;
+        ss << (int)airspeed;
         std::string str = ss.str();
         glDisable(GL_LIGHTING);
         glColor3f(0.0, 0.0, 0.0);
@@ -740,7 +740,7 @@ void drawCompassBox(float heading) {
 void drawRoll(void){
 	glDisable(GL_LIGHTING);
 	glColor3f(1.0, 1.0, 1.0);
-	// Various values. 
+	// Various values.
 	double cy = 0.5;	// Center of sphere x
 	double cx = 0.0;	// Center of sphere y
 	double x = 0.0;		// Value for XCoord of one vertex of the dash
@@ -757,9 +757,9 @@ void drawRoll(void){
 	// This draws the fine grain markers every 11.25 degrees.
 	for(i = 4; i < 14; i++){
 		// Outer Point
-		x = cx + r * cos(a); 	
+		x = cx + r * cos(a);
 		y = cy + r * sin(a);
-		// Inner Point: smaller circle circumscribed. 
+		// Inner Point: smaller circle circumscribed.
 		xInner = cx + (r - .1) * cos(a);
 		yInner = cy + (r - .1) * sin(a);
 		// Draw the dashes
@@ -777,10 +777,10 @@ void drawRoll(void){
  		xInner = cx + (r - .1) * cos(a);
 		yInner = cy + (r - .1) * sin(a);
 		// Outer Point 1
-                x1 = cx + (r + .1) * cos(a - 0.0314);    
+                x1 = cx + (r + .1) * cos(a - 0.0314);
                 y1 = cy + (r + .1) * sin(a - 0.0314);
 		// Outer Point 2
-                x2 = cx + (r + .1) * cos(a + 0.0314);    
+                x2 = cx + (r + .1) * cos(a + 0.0314);
                 y2 = cy + (r + .1)  * sin(a + 0.0314);
 		glLineWidth(2.0);
 		glBegin(GL_POLYGON);
@@ -832,7 +832,7 @@ void drawDecorators(void){
 		glVertex3f(0.17-0.005, 0.008, 4.5);
 		glVertex3f(0.3-0.005, 0.008, 4.5);
 	glEnd();
-	
+
 	glEnable(GL_LIGHTING);
 
 }
@@ -911,10 +911,11 @@ void makeAllImages() {
 //GLfloat theta[] = {(-90.0+destination.pitch), 0.0, 0.0};	// Used in our display function.
 // Display FCN
 void display(void) {
-	getDataFillStruct();
+  gettimeofday(&tv1, NULL);
+  getDataFillStruct();
 	// Initialize lighting model
 	theta[0] =  destination.pitch-90;
-	gettimeofday(&tv1, NULL);
+
 	// Initialize lighting model
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LIGHT_MODEL_AMBIENT);
 	// Enable the lighting model.
@@ -1046,7 +1047,7 @@ int main(int argc, char **argv) {
 	if (retcode < 0) {
 		printf("*** ERROR - send() failed \n");
 		exit(-1);
-	} 
+	}
 
 	printf("Hello, world!\n");
 

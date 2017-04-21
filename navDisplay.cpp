@@ -263,7 +263,7 @@ void drawAirSpeedStrip(GLuint airSpeedTexture){
         // first arguement is left/right
         // 2, -5, 4
 	// Finding zero position.
-        glTranslatef(-2.0, -2.95 - (.0716 * destination.airspeed), 2.0);
+        glTranslatef(-2.0, -2.95 - (.0704 * destination.airspeed), 2.0);
         glBegin(GL_POLYGON);
                 glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0, 32.0, 0.0);
                 glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0, 0.0, 0.0);

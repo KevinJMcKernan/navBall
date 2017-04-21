@@ -262,7 +262,7 @@ if (retcode < 0)
 //*********************End of server setup*****************************************
 //*********************Send all data for the client*******************************
 
-	printf("\n");
+		printf("\n");
 	//int exitCondition = 0;
 	//while(!exitCondition){
 	//	exitCondition = interface();
@@ -272,7 +272,7 @@ if (retcode < 0)
 	//return 0;
 	string x;
 	struct flightData data1;
-
+  float valueModifier;
 	data1.pitch						=0.0;
 	data1.roll						=0.0;
 	data1.airspeed				=0.0;
@@ -283,49 +283,70 @@ if (retcode < 0)
 	data1.altitude 				= 0;
 	sendFlightData(data1, retcode, connect_s);
 
-	printf("Pitch Test: Press Enter to contine.\n");
-	cin >> x;
-	//pitch test
-	for(int i = 0; i < 720; i++){
+	printf("Final Test: Press Enter to contine.\n");
+  cin >> x;
+  data1.pitch						=0.0;
+	data1.roll						=0.0;
+	data1.airspeed				=247;
+	data1.heading 				=0.0;
+	data1.slipSkid 				=0.0;
+	data1.localizerScale  =0.0;
+	data1.glideSlope 			=0.0;
+	data1.altitude 				= 1930;
+	//base hold for video start
+	for(int i = 0; i < 10; i++){
 		sendFlightData(data1, retcode, connect_s);
-			if (i < 360){
-				data1.pitch+=0.5;
-        data1.roll+=0.5;
-        data1.airspeed+=1;
-        data1.heading+=1;
-        data1.altitude+=15;
+    usleep(1000);
+  }  //pitch test
+	for(int i = 0; i < 200; i++){
+		sendFlightData(data1, retcode, connect_s);
+    data1.airspeed	+= 0.02;
+    data1.pitch	+= 0.04;
+    data1.roll =+ 0.05;
+    data1.altitude += 1;
+    data1.heading += 0.01;
+    data1.localizerScale += ((rand() % 10 ) * 0.0005);
+    data1.glideSlope += ((rand() % 10 ) * 0.0005);       
+    data1.slipSkid += (((rand() % 10 )-5) * 0.0005); 
+    usleep(1000);
+  }
+	for(int i = 0; i < 200; i++){
+		sendFlightData(data1, retcode, connect_s);
+    data1.airspeed	+= 0.10;
+    data1.pitch	-= 0.05;
+    data1.roll -= 0.12;
+    data1.altitude += 2;
+    data1.heading -= 0.05;
+    data1.localizerScale -= ((rand() % 10 ) * 0.0005);
+    data1.glideSlope -= ((rand() % 10 ) * 0.0005); 
+    data1.slipSkid += (((rand() % 10 )-5) * 0.0005); 
 
-      }
-			else{
-				data1.pitch-=0.5;
-        data1.roll-=0.5;
-        data1.airspeed-=1;
-      }//usleep(1);
-usleep(1000);
-}
+    usleep(1000);
+  }
+  for(int i = 0; i < 200; i++){
+		sendFlightData(data1, retcode, connect_s);
+    data1.airspeed	-= 0.03;
+    data1.pitch	+= 0.05;
+    data1.roll += 0.22;
+    data1.altitude += 1;
+    data1.heading += 0.05;
+    
+    data1.localizerScale += (((rand() % 10)-5 ) * 0.0005);
+    data1.glideSlope += (((rand() % 10 )-5) * 0.0005); 
+    data1.slipSkid += (((rand() % 10 )-5) * 0.0005); 
+    usleep(1000);
+  }
+  for(int i = 0; i < 200; i++){
+		sendFlightData(data1, retcode, connect_s);
+    data1.airspeed	-= 0.03;
+    data1.pitch	+= 0.02;
+    data1.roll -= 0.26;
+    data1.altitude += 1;
+    data1.heading -= 0.05;
+    data1.slipSkid += (((rand() % 10 )-5) * 0.0005); 
+    usleep(1000);
+  }
 
-	printf("Heading Test: Press Enter to contine.\n");
-	cin >> x;
-	//heading test
-
-	printf("Slipball Test: Press Enter to contine.\n");
-
-	//slipSkid test
-	for(int i = 0; i < 40; i++){
-
-      sendFlightData(data1, retcode, connect_s);
-      if (i < 20){
-				data1.slipSkid+=0.1;
-        data1.localizerScale+=0.1;
-  				data1.glideSlope+=0.1;
-      }
-			else{
-				data1.slipSkid-=0.1;
-        data1.localizerScale-=0.1;
-        data1.glideSlope-=0.1;
-      }
-      usleep(250000);
-}
 
 //*********************end Send all data for the client************
 //********************close server*********************************
